@@ -106,7 +106,7 @@ export default function DoctorCalendar({ doctorId }: DoctorCalendarProps) {
 
       
       <button
-  onClick={() => router.push(`/booking/${doctorId}?date=${selectedDate}&time=${selectedTime}`)}
+  onClick={() => router.push(`/booking/${doctorId}/info?date=${selectedDate}&time=${selectedTime}`)}
   disabled={!selectedDate || !selectedTime}
   className={`w-full mt-6 sm:mt-8 py-3.5 sm:py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold transition-all duration-300 ${
     selectedDate && selectedTime

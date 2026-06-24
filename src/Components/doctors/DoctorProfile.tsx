@@ -23,7 +23,7 @@ export default function DoctorProfile() {
 
           <div className="flex items-center gap-2 bg-gray-50 w-fit px-3 py-1.5 rounded-xl border border-gray-100">
             <Image src="/icons/CheckCircle.svg" alt="نظام پزشکی" width={18} height={18} />
-            <span className="text-[13px] text-gray-600 font-bold">کد نظام پزشکی:-۴۳۳۶۳</span>
+            <span className="text-[13px] text-gray-600 font-bold">کد نظام پزشکی:۴۳۳۶۳</span>
           </div>
 
           <div className="space-y-4 pt-2">
