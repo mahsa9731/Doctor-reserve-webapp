@@ -18,9 +18,9 @@ Follow these steps to spin up the development environment locally.
    git clone <repository-url>
    cd doctor-reserve
 
-```bash
-npm install
-# or yarn install / pnpm install
+     ```bash
+     npm install
+     # or yarn install / pnpm install
 
 # 🛠 Tech Stack & Coding Standards
 Core Framework: Next.js 14 (App Router)
