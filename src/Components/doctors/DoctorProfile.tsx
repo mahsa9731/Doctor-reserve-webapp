@@ -1,8 +1,10 @@
 "use client";
 import Image from "next/image";
-import { Star } from "lucide-react";
+import { Star,ChevronDown,} from "lucide-react";
+import React, { useState } from 'react';
 
 export default function DoctorProfile() {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   return (
     <div className="bg-white rounded-[24px] p-6 sm:p-8 shadow-sm border border-gray-100" dir="rtl">
      
@@ -54,17 +56,37 @@ export default function DoctorProfile() {
         </div>
       </div>
 
-      <div className="mt-10 pt-8 border-t border-gray-50 relative">
-        <h3 className="text-[18px] font-black text-gray-900 mb-4">درباره دکتر زهرا وارسته</h3>
-        <p className="text-gray-600 text-[14px] leading-8 text-justify font-medium">
-          دارای بورد تخصصی بیماری‌های قلب و عروق، فلوشیپ اقدامات مداخله‌ای قلب و عروق (اینترونشنال کاردیولوژی) بزرگسالان، آنژیوگرافی و آنژیوپلاستی عروق قلبی قلبی عروق و کلیه تنگی‌های عروق محیطی...
-        </p>
-        
-        <button className="flex items-center gap-1 text-blue-600 text-[14px] font-black mt-4 transition-all hover:gap-2">
-          مشاهده بیشتر
-          <Image src="/icons/chevron-down.svg" alt="بیشتر" width={16} height={16} />
-        </button>
-      </div>
+     
+<div className="mt-10 pt-8 border-t border-gray-50 relative">
+  <h3 className="text-[18px] font-black text-gray-900 mb-4">درباره دکتر زهرا وارسته</h3>
+  
+  <div className="relative">
+    <p 
+      className={`text-gray-600 text-[14px] leading-8 text-justify font-medium transition-all duration-300 ${
+        isExpanded ? 'max-h-[1000px]' : 'max-h-[96px] overflow-hidden line-clamp-3'
+      }`}
+    >
+      دارای بورد تخصصی بیماری‌های قلب و عروق، فلوشیپ اقدامات مداخله‌ای قلب و عروق (اینترونشنال کاردیولوژی) بزرگسالان، آنژیوگرافی و آنژیوپلاستی عروق قلبی و کلیه تنگی‌های عروق محیطی. دکتر زهرا وارسته با بیش از سال‌ها تجربه در زمینه تشخیص و درمان بیماری‌های پیچیده دریچه‌ای، نارسایی قلب، کنترل فشار خون‌های مقاوم به درمان و پیشگیری از سکته‌های قلبی، خدمات پیشرفته‌ای را به مراجعین ارائه می‌دهند. در مطب ایشان علاوه بر معاینات تخصصی، خدماتی چون اکوکاردیوگرافی پیشرفته، تست ورزش، هولتر مانیتورینگ ریتم و فشار خون با بهره‌گیری از مدرن‌ترین تجهیزات روز دنیا انجام می‌پذیرد تا دقیق‌ترین روند درمانی برای بیماران برنامه‌ریزی شود.
+    </p>
+    
+    {!isExpanded && (
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+    )}
+  </div>
+  
+  <div className="mt-4 flex justify-center">
+    <button 
+      type="button"
+      onClick={() => setIsExpanded(!isExpanded)}
+      className="flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition-all duration-200 hover:text-gray-600 hover:border-gray-300"
+    >
+      <ChevronDown 
+        size={18} 
+        className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : 'rotate-0'}`} 
+      />
+    </button>
+  </div>
+</div>
     </div>
   );
 }

@@ -1,7 +1,12 @@
+"use client";
 import { Star } from "lucide-react";
 import Image from "next/image";
+import Link from 'next/link';
+import { useSearchParams, useParams } from 'next/navigation';
 
 export default function DoctorReviews() {
+  const params = useParams();
+  const doctorId = params.id;
   const reviews = [
     { 
       id: 1, 
@@ -43,10 +48,13 @@ export default function DoctorReviews() {
             {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}
           </div>
           <span className="text-gray-400 text-sm">(۱۰۵ نظر)</span>
-          <button className="flex items-center gap-1.5 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-xl text-xs font-black hover:bg-blue-100 transition-colors">
-      <Image src="/icons/comment-add.svg" alt="افزودن" width={14} height={14} />
-      <span>ثبت نظر جدید</span>
-    </button>
+          <Link 
+  href={`/doctors/${doctorId}/comment`}
+  className="flex items-center gap-1.5 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-xl text-xs font-black hover:bg-blue-100 transition-colors"
+>
+  <Image src="/icons/comment-add.svg" alt="افزودن" width={14} height={14} />
+  <span>ثبت نظر جدید</span>
+</Link>
         </div>
              
       </div>
