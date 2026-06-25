@@ -1,11 +1,15 @@
 'use client';
-
+import { useRouter, useParams , useSearchParams} from 'next/navigation';
 import React, { useState } from 'react';
 import Image from 'next/image';
 
 export default function OnlineGateway() {
+  const router = useRouter();
+  const params = useParams();
+  const doctorId = params.id;
   const [selectedBank, setSelectedBank] = useState<'saman' | 'parsian'>('saman');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
 
   const handlePayment = () => {
     if (!acceptedTerms) {
@@ -13,7 +17,16 @@ export default function OnlineGateway() {
       return;
     }
 
-    alert(`در حال هدایت به درگاه بانک ${selectedBank === 'saman' ? 'سامان' : 'پارسیان'}...`);
+    
+    const randomNumber = Math.random();
+
+    if (randomNumber < 0.7) {
+      
+      router.push(`/booking/${doctorId}/paymentsuccess`);
+    } else {
+      
+      router.push(`/booking/${doctorId}/paymentfailed`);
+    }
   };
 
   return (
@@ -22,7 +35,6 @@ export default function OnlineGateway() {
         درگاه پرداخت آنلاین
       </h3>
 
-      
       <div 
         onClick={() => setSelectedBank('saman')}
         className={`flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all ${
@@ -32,7 +44,6 @@ export default function OnlineGateway() {
         }`}
       >
         <div className="flex items-center gap-3">
-         
           <div className="w-10 h-10 relative bg-white rounded-xl border border-gray-100 flex items-center justify-center shadow-sm">
             <Image 
               src="/icons/saman.png" 
@@ -40,7 +51,7 @@ export default function OnlineGateway() {
               width={30} 
               height={30} 
               className="object-contain"
-               />
+            />
           </div>
           <div>
             <span className="text-sm font-black text-gray-900 block">درگاه پرداخت بانک سامان</span>
@@ -55,7 +66,6 @@ export default function OnlineGateway() {
         />
       </div>
 
-     
       <div 
         onClick={() => setSelectedBank('parsian')}
         className={`flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all ${
@@ -72,7 +82,7 @@ export default function OnlineGateway() {
               width={30} 
               height={30} 
               className="object-contain"
-               />
+            />
           </div>
           <div>
             <span className="text-sm font-black text-gray-900 block">درگاه پرداخت بانک پارسیان</span>
@@ -87,6 +97,7 @@ export default function OnlineGateway() {
         />
       </div>
 
+     
       <div className="flex items-center gap-3 bg-gray-50 p-3.5 rounded-xl border border-gray-100">
         <input 
           type="checkbox" 
