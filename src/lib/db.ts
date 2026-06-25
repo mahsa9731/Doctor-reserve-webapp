@@ -1,45 +1,26 @@
-import mongoose from 'mongoose';
+import { MongoClient, Db } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const URI = process.env.MONGODB_URI as string;
+const DB_NAME = "doctorDB";
 
-if (!MONGODB_URI) {
-  throw new Error('لطفاً متغیر MONGODB_URI را در فایل .env.local تعریف کنید');
+if (!URI) {
+  throw new Error('لطفاً متغیر MONGODB_URI را در فایل .env.local تعریف کنید.');
 }
 
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
 
-let cached = (global as any).mongoose;
+export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb };
+  }
 
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+  const client = new MongoClient(URI);
+  await client.connect();
+  const db = client.db(DB_NAME);
+
+  cachedClient = client;
+  cachedDb = db;
+
+  return { client, db };
 }
-
-async function connectDB() {
-  
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  
-  if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongooseInstance) => {
-      console.log('=== دیتابیس MongoDB Atlas با موفقیت متصل شد!  ===');
-      return mongooseInstance;
-    });
-  }
-
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    console.error('خطا در اتصال به دیتابیس مونگو:', e);
-    throw e;
-  }
-
-  return cached.conn;
-}
-
-export default connectDB;
