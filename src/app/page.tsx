@@ -242,15 +242,15 @@ export default function HomePage() {
 
     <div className="bg-zinc-50 min-h-screen py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* تیتر صفحه */}
+        
         <h1 className="text-2xl font-bold text-zinc-800 mb-8 text-left md:text-right">
           سوالات متداول
         </h1>
 
-        {/* کانتینر اصلی سوالات */}
+       
         <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden relative">
           
-          {/* علامت سوال بزرگ پس‌زمینه (واترمارک) */}
+          
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
              <span className="text-[400px] font-bold text-zinc-900">؟</span>
           </div>
@@ -263,7 +263,7 @@ export default function HomePage() {
                     {question}
                   </span>
                   <span className="text-zinc-400 group-open:rotate-180 transition-transform duration-300">
-                    {/* آیکون فلش */}
+                   
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                   </span>
                 </summary>

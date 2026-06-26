@@ -6,16 +6,12 @@ import {
   Calendar, 
   Star, 
   ChevronDown, 
-  ChevronUp,
   SlidersHorizontal, 
   ArrowUpDown, 
   Check, 
   X,
-  Phone,
-  Mail,
-  Send,
+  Plus
 } from 'lucide-react';
-
 
 interface Doctor {
   id: number;
@@ -30,109 +26,42 @@ interface Doctor {
 }
 
 export default function SearchPage() {
+  // States برای مدیریت فیلترها
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [openSection, setOpenSection] = useState({
-    specialty: true,
-    insurance: true,
-    experience: true,
-    status: true,
-    city: true,
-    gender: true
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<'default' | 'popular' | 'nearest'>('default');
+  const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const [selectedInsurance, setSelectedInsurance] = useState("");
+  const [experience, setExperience] = useState<string[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [gender, setGender] = useState("");
+  const [status, setStatus] = useState({
+    hasSlot: false,
+    online: false,
+    inPerson: false,
   });
 
-  const toggleSection = (section: keyof typeof openSection) => {
-    setOpenSection(prev => ({ ...prev, [section]: !prev[section] }));
+  const toggleExperience = (value: string) => {
+    if (experience.includes(value)) {
+      setExperience(experience.filter((x) => x !== value));
+    } else {
+      setExperience([...experience, value]);
+    }
   };
 
-  const [sortBy, setSortBy] = useState<'default' | 'popular' | 'nearest'>('default');
-
   const doctors: Doctor[] = [
-    {
-      id: 1,
-      name: "دکتر زهرا وارسته",
-      specialty: "متخصص قلب و عروق",
-      rating: "۴.۸",
-      reviews: "۱۰۵",
-      address: "تهران، ستارخان، خیابان هفتم، پلاک ۴۰",
-      nextSlot: "دوشنبه ۲۴ دی",
-      image: "/images/doctor-1.jpg",
-      nizamCode: "۴۰۲۲۳"
-    },
-    {
-      id: 2,
-      name: "دکتر علی راد",
-      specialty: "متخصص ریه",
-      rating: "۴.۸",
-      reviews: "۱۰۵",
-      address: "تهران، هفت تیر، خیابان بهار شیراز، پلاک ۳۶",
-      nextSlot: "دوشنبه ۲۴ دی",
-      image: "/images/doctor-2.jpg",
-      nizamCode: "۵۹۳۰۲"
-    },
-    {
-      id: 3,
-      name: "دکتر بهنوش حسینی",
-      specialty: "جراح گوش، حلق و بینی",
-      rating: "۴.۸",
-      reviews: "۱۰۵",
-      address: "تهران، پیروزی، خیابان کوکاکولا، کوچه احمدی، ساختمان پزشکان شفا",
-      nextSlot: "دوشنبه ۲۴ دی",
-      image: "/images/doctor-3.jpg",
-      nizamCode: "۹۰۳۵۶"
-    },
-    {
-      id: 4,
-      name: "دکتر یاشار پناهی",
-      specialty: "متخصص روانشناسی بالینی",
-      rating: "۴.۸",
-      reviews: "۱۰۵",
-      address: "تهران، ونک، خیابان ملاصدرا، کوچه صائب تبریزی غربی",
-      nextSlot: "دوشنبه ۲۴ دی",
-      image: "/images/doctor-4.jpg",
-      nizamCode: "۹۴۰۲۳"
-    },
-    {
-      id: 5,
-      name: "دکتر زهرا سعادتی",
-      specialty: "متخصص گوش و حلق و بینی",
-      rating: "۴.۸",
-      reviews: "۱۰۵",
-      address: "تهران، ستارخان، خیابان هفتم، پلاک ۴۰",
-      nextSlot: "دوشنبه ۲۴ دی",
-      image: "/images/doctor-5.jpg",
-      nizamCode: "۴۰۲۲۳"
-    }
+    { id: 1, name: "دکتر زهرا وارسته", specialty: "متخصص قلب و عروق", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، ستارخان، پلاک ۴۰", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-1.jpg", nizamCode: "۴۰۲۲۳" },
+    { id: 2, name: "دکتر علی راد", specialty: "متخصص ریه", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، هفت تیر، پلاک ۳۶", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-2.jpg", nizamCode: "۵۹۳۰۲" },
+    { id: 3, name: "دکتر بهنوش حسینی", specialty: "جراح گوش، حلق و بینی", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، پیروزی، ساختمان پزشکان شفا", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-3.jpg", nizamCode: "۹۰۳۵۶" },
+    { id: 4, name: "دکتر یاشار پناهی", specialty: "متخصص روانشناسی بالینی", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، ونک، کوچه صائب تبریزی", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-4.jpg", nizamCode: "۹۴۰۲۳" },
+    { id: 5, name: "دکتر زهرا سعادتی", specialty: "متخصص گوش و حلق و بینی", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، ستارخان، پلاک ۴۰", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-5.jpg", nizamCode: "۴۰۲۲۳" }
   ];
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] text-right font-sans" dir="rtl">
+    <div className="min-h-screen bg-[#fcfcfc] text-right" dir="rtl">
       
-      {/* Header Implementation */}
-      <header className="bg-white border-b border-gray-100 py-4 px-6 md:px-12 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2 text-blue-600 font-bold text-xl">
-              <span className="bg-blue-600 text-white p-1.5 rounded-lg">
-                <PlusIcon className="w-5 h-5" />
-              </span>
-              <span>دکتر رزرو</span>
-            </div>
-            
-            <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600 font-medium">
-              <a href="#" className="text-blue-600 border-b-2 border-blue-600 pb-1">لیست پزشکان</a>
-              <a href="#" className="hover:text-blue-600 transition">سوالات متداول</a>
-              <a href="#" className="hover:text-blue-600 transition">درباره ما</a>
-              <a href="#" className="hover:text-blue-600 transition">تماس با ما</a>
-            </nav>
-          </div>
-
-          <button className="text-sm font-semibold text-blue-600 border border-blue-100 px-4 py-2 rounded-xl hover:bg-blue-50 transition">
-            ورود / ثبت نام
-          </button>
-        </div>
-      </header>
-
-       {/* Search Section */}
+      {/* Search Section */}
       <section className="relative w-full h-[300px] md:h-[400px] flex items-center justify-center overflow-hidden rounded-2xl mt-6">
  
   <div className="absolute inset-0 z-0">
@@ -171,49 +100,108 @@ export default function SearchPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
-        <div className="md:hidden flex items-center justify-between bg-white border border-gray-100 p-3 rounded-2xl mb-4 shadow-sm">
-          <button 
-            onClick={() => setIsMobileFilterOpen(true)}
-            className="flex items-center gap-2 text-sm font-semibold text-gray-700 bg-gray-50 px-4 py-2.5 rounded-xl w-[48%] justify-center border border-gray-100"
-          >
-            <SlidersHorizontal className="w-4 h-4 text-gray-500" />
-            فیلترها
-          </button>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
-          <button 
-            className="flex items-center gap-2 text-sm font-semibold text-gray-700 bg-gray-50 px-4 py-2.5 rounded-xl w-[48%] justify-center border border-gray-100"
-          >
-            <ArrowUpDown className="w-4 h-4 text-gray-500" />
-            مرتب‌سازی
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          <aside className="hidden lg:block lg:col-span-1 bg-white border border-gray-200/80 rounded-2xl p-5 space-y-6 sticky top-24">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <span className="font-bold text-gray-800 text-base">فیلترها</span>
-              <button className="text-xs text-red-500 hover:text-red-600 transition font-medium">
-                حذف همه فیلترها ×
-              </button>
+          {/* Sidebar Filters - جدید */}
+          <aside className="hidden lg:block bg-white border border-gray-200 rounded-3xl p-6 space-y-6 h-fit sticky top-24 shadow-sm">
+            <div className="flex items-center justify-between pb-2 border-b border-gray-50">
+                <h3 className="font-bold text-gray-800">فیلترها</h3>
+                <button className="text-xs text-red-500 hover:underline">حذف همه</button>
             </div>
-            
-            {/* Filter sections omitted for brevity in summary, see source code for full logic */}
-            {/* [Filter UI logic goes here] */}
+
+            {/* جستجو درون فیلتر */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 mb-2">جستجوی نام پزشک</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="مثلا: دکتر حسینی"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full py-2.5 pr-10 pl-4 border border-gray-100 bg-gray-50 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+                <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              </div>
+            </div>
+
+            {/* تخصص */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 mb-2">تخصص</label>
+              <select
+                value={selectedSpecialty}
+                onChange={(e) => setSelectedSpecialty(e.target.value)}
+                className="w-full py-2.5 px-3 border border-gray-100 bg-gray-50 rounded-xl text-sm outline-none cursor-pointer"
+              >
+                <option value="">همه تخصص‌ها</option>
+                <option value="heart">قلب و عروق</option>
+                <option value="internal">داخلی</option>
+              </select>
+            </div>
+
+            {/* وضعیت نوبت دهی */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold text-gray-500">وضعیت نوبت‌دهی</label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
+                <input type="checkbox" checked={status.hasSlot} onChange={(e) => setStatus({ ...status, hasSlot: e.target.checked })} className="w-4 h-4 rounded text-blue-600" />
+                <span>دارای نوبت خالی</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
+                <input type="checkbox" checked={status.online} onChange={(e) => setStatus({ ...status, online: e.target.checked })} className="w-4 h-4 rounded text-blue-600" />
+                <span>ویزیت آنلاین</span>
+              </label>
+            </div>
+
+            {/* تجربه کاری */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 mb-2">تجربه کاری</label>
+              <div className="flex flex-wrap gap-2">
+                {["5+", "10+", "15+"].map((exp) => (
+                  <button
+                    key={exp}
+                    onClick={() => toggleExperience(exp)}
+                    className={`px-3 py-1.5 rounded-lg text-xs transition border ${experience.includes(exp) ? "bg-blue-600 text-white border-blue-600" : "bg-gray-50 text-gray-600 border-transparent hover:bg-gray-100"}`}
+                  >
+                    {exp.replace('+', '')} سال به بالا
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* جنسیت */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 mb-2">جنسیت پزشک</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
+                  <input type="radio" name="gender" value="female" onChange={() => setGender("female")} className="w-4 h-4 text-blue-600" />
+                  <span>خانم</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
+                  <input type="radio" name="gender" value="male" onChange={() => setGender("male")} className="w-4 h-4 text-blue-600" />
+                  <span>آقا</span>
+                </label>
+              </div>
+            </div>
+
+            <button className="w-full py-3 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-100 text-sm">
+              اعمال فیلترها
+            </button>
           </aside>
 
+          {/* Result Section */}
           <section className="lg:col-span-3 space-y-5">
-            <div className="hidden md:flex items-center justify-between bg-white border border-gray-200/80 p-4 rounded-2xl shadow-sm">
+            {/* Sort Bar */}
+            <div className="flex flex-col md:flex-row items-center justify-between bg-white border border-gray-100 p-4 rounded-3xl shadow-sm gap-4">
               <div className="flex items-center gap-4">
-                <span className="text-xs font-semibold text-gray-500">مرتب سازی بر اساس:</span>
+                <span className="text-[11px] font-bold text-gray-400">مرتب سازی:</span>
                 <div className="flex gap-2">
-                  <button onClick={() => setSortBy('default')} className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${sortBy === 'default' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}>پیش فرض</button>
-                  <button onClick={() => setSortBy('popular')} className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${sortBy === 'popular' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}>محبوب‌ترین</button>
-                  <button onClick={() => setSortBy('nearest')} className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${sortBy === 'nearest' ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}>نزدیک‌ترین نوبت آزاد</button>
+                  <button onClick={() => setSortBy('default')} className={`px-4 py-2 text-xs font-bold rounded-xl transition ${sortBy === 'default' ? 'bg-blue-600 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>پیش فرض</button>
+                  <button onClick={() => setSortBy('popular')} className={`px-4 py-2 text-xs font-bold rounded-xl transition ${sortBy === 'popular' ? 'bg-blue-600 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>محبوب‌ترین</button>
                 </div>
               </div>
-              <span className="text-xs text-gray-400">۵ پزشک یافت شد</span>
+              <span className="text-xs text-gray-400 font-medium">۵ پزشک در این منطقه یافت شد</span>
             </div>
 
+            {/* Doctors List */}
             <div className="space-y-4">
               {doctors.map((doctor) => (
                 <DoctorCard key={doctor.id} doctor={doctor} />
@@ -222,67 +210,56 @@ export default function SearchPage() {
           </section>
         </div>
       </main>
-
-      {/* Footer & Modals Omitted for Brevity in this documentation preview */}
     </div>
   );
 }
 
+// کامپوننت کارت پزشک
 function DoctorCard({ doctor }: { doctor: Doctor }) {
   return (
-    <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col md:flex-row gap-5 items-start md:items-center relative">
-      <div className="hidden md:flex items-center gap-1 absolute top-5 left-5 text-[11px] text-gray-500 font-medium bg-gray-50 px-2 py-1 rounded-lg">
-        <Check className="w-3.5 h-3.5 text-emerald-500" />
-        <span>کد نظام پزشکی: {doctor.nizamCode}</span>
+    <div className="bg-white p-5 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col md:flex-row gap-6 items-center relative group">
+      <div className="absolute top-5 left-6 text-[10px] text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity">
+        کد نظام پزشکی: {doctor.nizamCode}
       </div>
 
-      <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0 mx-auto md:mx-0">
+      <div className="w-28 h-28 rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0 shadow-inner">
         <img src={doctor.image} alt={doctor.name} className="w-full h-full object-cover" />
       </div>
 
-      <div className="flex-grow space-y-2 text-right w-full">
+      <div className="flex-grow space-y-3 text-right w-full">
         <div>
-          <h2 className="text-base font-bold text-gray-800">{doctor.name}</h2>
-          <p className="text-xs font-semibold text-gray-400 mt-1">{doctor.specialty}</p>
+          <h2 className="text-lg font-bold text-gray-800">{doctor.name}</h2>
+          <p className="text-sm font-medium text-blue-500 mt-0.5">{doctor.specialty}</p>
         </div>
 
-        <div className="flex items-center gap-1">
-          <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-0.5">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+              <Star key={i} className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
             ))}
           </div>
-          <span className="text-[10px] text-gray-400">({doctor.reviews} نظر)</span>
+          <span className="text-xs text-gray-400 font-medium">({doctor.reviews} نظر)</span>
         </div>
 
-        <div className="flex items-start gap-1.5 text-xs text-gray-500 pt-1">
-          <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-          <span className="leading-relaxed">آدرس مطب: {doctor.address}</span>
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <MapPin className="w-4 h-4 text-blue-400" />
+          <span>{doctor.address}</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs text-gray-600">
-          <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-          <span>اولین نوبت در دسترس: <span className="font-bold text-gray-800">{doctor.nextSlot}</span></span>
+        <div className="flex items-center gap-2 text-xs text-gray-600 bg-blue-50/50 w-fit px-3 py-1.5 rounded-lg">
+          <Calendar className="w-4 h-4 text-blue-500" />
+          <span>اولین نوبت: <span className="font-bold text-blue-700">{doctor.nextSlot}</span></span>
         </div>
       </div>
 
-      <div className="flex flex-col gap-2.5 w-full md:w-auto md:min-w-[150px] pt-4 md:pt-0 border-t md:border-t-0 border-gray-100">
-        <button className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md shadow-blue-50 transition text-xs">
-          رزرو نوبت ←
+      <div className="flex flex-col gap-3 w-full md:w-44 pt-4 md:pt-0 border-t md:border-t-0 md:border-r border-gray-100 md:pr-6">
+        <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-100 transition text-xs">
+          رزرو نوبت نهایی
         </button>
-        <button className="w-full py-2.5 bg-white hover:bg-gray-50 text-gray-600 font-semibold border border-gray-200 rounded-xl transition text-xs">
+        <button className="w-full py-3 bg-white hover:bg-gray-50 text-gray-600 font-bold border border-gray-200 rounded-2xl transition text-xs">
           مشاهده پروفایل
         </button>
       </div>
     </div>
-  );
-}
-
-function PlusIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
   );
 }

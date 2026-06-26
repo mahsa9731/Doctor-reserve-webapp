@@ -10,7 +10,7 @@ import {
   Filter,
 } from "lucide-react";
 
-// تعریف ساختار داده پزشک
+
 interface Doctor {
   id: number;
   name: string;
@@ -21,7 +21,7 @@ interface Doctor {
   nextSlot: string;
   image: string;
 }
-// Sample data for doctors - replace with your actual data fetching logic
+
 const doctors = [
  {
       id: 1,
@@ -84,7 +84,7 @@ export default function DoctorListingPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("default");
   
-  // وضعیت‌های فیلتر
+
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [selectedInsurance, setSelectedInsurance] = useState("");
   const [experience, setExperience] = useState<string[]>([]);
@@ -109,16 +109,16 @@ export default function DoctorListingPage() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-8" dir="rtl">
       <div className="max-w-7xl mx-auto">
         
-        {/* عنوان صفحه */}
+       
         <h1 className="text-2xl font-bold text-gray-800 mb-6">لیست پزشکان متخصص</h1>
 
-        {/* گرید اصلی: ۳ ستون برای سایدبار فیلترها (راست) و ۹ ستون برای کارت‌ها (چپ) */}
+       
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* ================= سایدبار فیلترها (سمت راست) ================= */}
+          
           <aside className="lg:col-span-3 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm h-fit space-y-6">
             
-            {/* ۱. باکس جستجوی پزشک */}
+            
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 جستجو پزشک
@@ -137,7 +137,7 @@ export default function DoctorListingPage() {
 
             <hr className="border-gray-100" />
 
-            {/* ۲. فیلتر تخصص */}
+            
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 تخصص
@@ -157,7 +157,7 @@ export default function DoctorListingPage() {
               </div>
             </div>
 
-            {/* ۳. فیلتر بیمه */}
+          
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 بیمه طرف قرارداد
@@ -177,7 +177,7 @@ export default function DoctorListingPage() {
               </div>
             </div>
 
-            {/* ۴. فیلتر تجربه کاری */}
+           
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 تجربه کاری
@@ -206,7 +206,7 @@ export default function DoctorListingPage() {
               </div>
             </div>
 
-            {/* ۵. وضعیت نوبت‌دهی (چک‌باکس‌ها) */}
+           
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">
                 وضعیت نوبت‌دهی
@@ -242,7 +242,7 @@ export default function DoctorListingPage() {
               </div>
             </div>
 
-            {/* ۶. موقعیت مکانی */}
+            
             <div className="space-y-3">
               <label className="block text-sm font-semibold text-gray-700">
                 موقعیت مکانی
@@ -274,7 +274,7 @@ export default function DoctorListingPage() {
               </div>
             </div>
 
-            {/* ۷. جنسیت پزشک */}
+            
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 جنسیت پزشک
@@ -305,13 +305,13 @@ export default function DoctorListingPage() {
               </div>
             </div>
 
-            {/* دکمه اعمال فیلتر */}
+            
             <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition duration-200 text-sm">
               اعمال فیلترها
             </button>
           </aside>
 
-          {/* ================= بخش لیست پزشکان (سمت چپ) ================= */}
+         
           <main className="lg:col-span-9 space-y-6">
             
             {/* نوار مرتب‌سازی */}
