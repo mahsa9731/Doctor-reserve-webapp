@@ -15,7 +15,7 @@ import {
   Send,
 } from 'lucide-react';
 
-// تعاریف مربوط به تایپ‌ها
+
 interface Doctor {
   id: number;
   name: string;
