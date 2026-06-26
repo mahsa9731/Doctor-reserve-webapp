@@ -131,31 +131,42 @@ export default function SearchPage() {
         </div>
       </header>
 
-      {/* Hero Search Section */}
-      <div 
-        className="relative bg-cover bg-center py-20 px-6 text-center text-white" 
-        style={{ backgroundImage: `linear-gradient(rgba(15, 32, 67, 0.65), rgba(15, 32, 67, 0.65)), url('/images/search-bg.jpg')` }}
-      >
-        <div className="max-w-3xl mx-auto space-y-4">
-          <h1 className="text-xl md:text-3xl font-extrabold leading-relaxed">
-            فقط یک جستجو با بهترین پزشکان فاصله دارید
-          </h1>
-          <p className="text-sm md:text-base text-gray-200">
-            در کمتر از ۱ دقیقه نوبت خود را رزرو کنید
-          </p>
+       {/* Search Section */}
+      <section className="relative w-full h-[300px] md:h-[400px] flex items-center justify-center overflow-hidden rounded-2xl mt-6">
+ 
+  <div className="absolute inset-0 z-0">
+    <img 
+      src="/images/search-bar.png" 
+      alt="Doctor Background" 
+      className="w-full h-full object-cover"
+    />
+    <div className="absolute inset-0 bg-black/40"></div> 
+  </div>
 
-          <div className="mt-8 flex items-center bg-white rounded-2xl p-2 shadow-lg max-w-xl mx-auto">
-            <span className="p-3 text-gray-400">
-              <Search className="w-5 h-5" />
-            </span>
-            <input 
-              type="text" 
-              placeholder="پزشک یا تخصص مورد نظر خود را جستجو کنید..." 
-              className="w-full py-2 bg-transparent text-gray-800 text-sm focus:outline-none placeholder:text-gray-400 text-right pr-1"
-            />
-          </div>
-        </div>
+  <div className="relative z-10 w-full max-w-3xl px-4 text-center text-white">
+    <h2 className="text-xl md:text-3xl font-bold mb-2 drop-shadow-md">
+      فقط یک جستجو با بهترین پزشکان فاصله دارید
+    </h2>
+    <p className="text-sm md:text-lg mb-8 opacity-90">
+      در کمتر از ۱ دقیقه نوبت خود را رزرو کنید
+    </p>
+
+    <div className="relative w-full max-w-2xl mx-auto group">
+      <input
+        type="text"
+        placeholder="پزشک یا تخصص مورد نظر خود را جستجو کنید..."
+        className="w-full py-4 px-6 pr-12 rounded-full bg-white/95 text-gray-800 text-right shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-gray-400"
+      />
+      
+     
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
       </div>
+    </div>
+  </div>
+</section>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
