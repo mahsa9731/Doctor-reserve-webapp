@@ -9,6 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+<<<<<<< HEAD
+    "lucide-react": "^1.21.0",
+    "next": "16.2.9",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+=======
     "axios": "^1.18.1",
     "jose": "^6.2.3",
     "lucide-react": "^1.21.0",
@@ -18,6 +24,7 @@
     "react-date-object": "^2.1.9",
     "react-dom": "19.2.4",
     "react-multi-date-picker": "^4.5.2"
+>>>>>>> 6fbdd70fccd2399bda1d2c8e420c341b8c47eb07
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
