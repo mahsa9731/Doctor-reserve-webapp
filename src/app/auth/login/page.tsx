@@ -114,8 +114,8 @@ export default function LoginPage() {
     const data = await res.json();
 
     if (res.ok) {
-      router.refresh();
-      // ذخیره توکن در لوکال استوریج (علاوه بر کلوکی که بک‌اند ست کرده) برای دسترسی‌های احتمالی فرانت
+      window.location.href = '/profile';
+      
       if (data.token) {
         localStorage.setItem('token', data.token);
       }
@@ -138,17 +138,17 @@ export default function LoginPage() {
       
       <div className="w-full max-w-[730px] h-[640px] flex flex-row rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 bg-white mx-auto flex-shrink-0" dir="rtl">
         
-        {/* ستون سمت راست: بخش فرم‌ها (پویا بر اساس Step) */}
+        
         <div className="w-1/2 h-full bg-white flex flex-col items-center justify-center px-10 box-border">
           <div className="w-full max-w-[280px] text-center flex flex-col items-center justify-center">
             
-            {/* لوگو یا آیکون مثبت بر اساس طرح فیگما */}
+           
             {step === 'login' ? (
               <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100/60 shadow-sm p-2.5 mb-5">
                 <img src="/brand/Logo.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
             ) : (
-              // آیکون پلاس دقیقاً مطابق تصویر فیگما برای بخش OTP
+             
               <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100/60 shadow-sm mb-5 text-blue-600">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -178,7 +178,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* مرحله اول: فرم دریافت شماره موبایل */}
+           
             {step === 'login' && (
               <form onSubmit={handleSendOtp} className="w-full space-y-4 text-right">
                 <div>
@@ -188,7 +188,7 @@ export default function LoginPage() {
                     maxLength={11}
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                    placeholder="مثال: 0933456789"
+                    placeholder="مثال: 09334567849"
                     disabled={loading}
                     className="w-full px-4 h-11 rounded-xl border border-gray-200 bg-gray-50/50 text-left font-mono tracking-wider focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-50 outline-none transition-all placeholder:text-gray-300 placeholder:font-sans placeholder:tracking-normal text-gray-700 text-[13px]"
                   />
@@ -204,11 +204,9 @@ export default function LoginPage() {
               </form>
             )}
 
-            {/* مرحله دوم: فرم ۵ رقمی تایید کدهای OTP مطابق فیگما */}
+            
             {step === 'otp' && (
               <form onSubmit={handleVerifyOtp} className="w-full flex flex-col items-center">
-                
-                {/* باکس ۵ ورودی با جهت چپ به راست */}
                 <div className="flex gap-2 mb-4 justify-center" dir="ltr">
                   {otp.map((digit, index) => (
                     <input
@@ -225,7 +223,7 @@ export default function LoginPage() {
                   ))}
                 </div>
 
-                {/* بخش تایمر معکوس طرح فیگما */}
+               
                 <div className="text-center mb-5">
                   <div className="text-[13px] font-mono font-bold text-gray-700">{formatTime(timeLeft)}</div>
                   {timeLeft > 0 ? (

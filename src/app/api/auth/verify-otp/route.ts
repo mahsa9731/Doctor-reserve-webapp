@@ -61,9 +61,9 @@ export async function POST(request: Request) {
       // ذخیره و ثبت شماره کاربر در کالکشن users برای اولین بار
       const result = await db.collection('users').insertOne(newUser);
       user = { ...newUser, _id: result.insertedId };
-      console.log('کاربر جدید با موفقیت در دیتابیس ثبت شد!');
+      console.log('کاربر جدید با موفقیت ثبت شد!');
     } else {
-      console.log('کاربر قدیمی با موفقیت وارد شد و اطلاعاتش لود گردید.');
+      console.log('کاربر قدیمی با موفقیت وارد شد.');
     }
 
     // ۵. ساخت توکن سشن (JWT) برای کاربر

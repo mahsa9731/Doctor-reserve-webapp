@@ -1,20 +1,16 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
 import { 
   Search, 
   MapPin, 
   Calendar, 
   Star, 
   ChevronDown, 
-  SlidersHorizontal, 
-  ArrowUpDown, 
-  Check, 
-  X,
-  Plus
 } from 'lucide-react';
 
 interface Doctor {
-  id: number;
+  _id: string;
   name: string;
   specialty: string;
   rating: string;
@@ -23,10 +19,15 @@ interface Doctor {
   nextSlot: string;
   image: string;
   nizamCode: string;
+  gender?: string;
+  province?: string;
+  city?: string;
 }
 
 export default function SearchPage() {
-  // States برای مدیریت فیلترها
+  const router = useRouter();
+  
+  
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<'default' | 'popular' | 'nearest'>('default');
@@ -42,6 +43,44 @@ export default function SearchPage() {
     inPerson: false,
   });
 
+ 
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const doctorsPerPage = 5;
+
+ 
+  useEffect(() => {
+    async function fetchDoctors() {
+      try {
+        const res = await fetch("/api/doctors");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const mappedDoctors = data.map((doc: any) => ({
+            _id: doc._id,
+            name: doc.name,
+            specialty: doc.specialty,
+            rating: doc.rating ? String(doc.rating) : "۵.۰",
+            reviews: doc.reviewsCount ? String(doc.reviewsCount) : "۰",
+            address: doc.address,
+            nextSlot: doc.availableSlots && doc.availableSlots[0] ? doc.availableSlots[0].date : "به زودی",
+            image: doc.avatar || "/images/default-avatar.jpg",
+            nizamCode: doc.medicalCode || "ثبت نشده",
+            gender: doc.gender || (doc.name.includes("زهرا") || doc.name.includes("فرنوش") || doc.name.includes("بهنوش") || doc.name.includes("مریم") ? "female" : "male"),
+            province: doc.province || "tehran",
+            city: doc.city || "tehran-c"
+          }));
+          setDoctors(mappedDoctors);
+        }
+      } catch (error) {
+        console.error("خطا در دریافت اطلاعات پزشکان:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDoctors();
+  }, []);
+
   const toggleExperience = (value: string) => {
     if (experience.includes(value)) {
       setExperience(experience.filter((x) => x !== value));
@@ -50,63 +89,100 @@ export default function SearchPage() {
     }
   };
 
-  const doctors: Doctor[] = [
-    { id: 1, name: "دکتر زهرا وارسته", specialty: "متخصص قلب و عروق", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، ستارخان، پلاک ۴۰", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-1.jpg", nizamCode: "۴۰۲۲۳" },
-    { id: 2, name: "دکتر علی راد", specialty: "متخصص ریه", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، هفت تیر، پلاک ۳۶", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-2.jpg", nizamCode: "۵۹۳۰۲" },
-    { id: 3, name: "دکتر بهنوش حسینی", specialty: "جراح گوش، حلق و بینی", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، پیروزی، ساختمان پزشکان شفا", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-3.jpg", nizamCode: "۹۰۳۵۶" },
-    { id: 4, name: "دکتر یاشار پناهی", specialty: "متخصص روانشناسی بالینی", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، ونک، کوچه صائب تبریزی", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-4.jpg", nizamCode: "۹۴۰۲۳" },
-    { id: 5, name: "دکتر زهرا سعادتی", specialty: "متخصص گوش و حلق و بینی", rating: "۴.۸", reviews: "۱۰۵", address: "تهران، ستارخان، پلاک ۴۰", nextSlot: "دوشنبه ۲۴ دی", image: "/images/doctor-5.jpg", nizamCode: "۴۰۲۲۳" }
-  ];
+  // ریست کردن فیلترها
+  const handleResetFilters = () => {
+    setSearchTerm("");
+    setSelectedSpecialty("");
+    setSelectedInsurance("");
+    setExperience([]);
+    setSelectedProvince("");
+    setSelectedCity("");
+    setGender("");
+    setStatus({ hasSlot: false, online: false, inPerson: false });
+    setCurrentPage(1);
+  };
+
+  // اعمال فیلترهای فعال روی لیست پزشکان دیتابیس
+  const filteredDoctors = doctors.filter((doctor) => {
+    // ۱. فیلتر جستجوی متنی (نام و تخصص)
+    const matchesSearch = 
+      doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // ۲. فیلتر تخصص سایدبار
+    const matchesSpecialty = selectedSpecialty === "" || 
+      (selectedSpecialty === "heart" && doctor.specialty.includes("قلب")) ||
+      (selectedSpecialty === "internal" && doctor.specialty.includes("داخلی")) ||
+      (selectedSpecialty === "pediatrics" && doctor.specialty.includes("اطفال"));
+
+    // ۳. فیلتر استان و شهر
+    const matchesProvince = selectedProvince === "" || doctor.province === selectedProvince;
+    const matchesCity = selectedCity === "" || doctor.city === selectedCity;
+
+    // ۴. فیلتر جنسیت
+    const matchesGender = gender === "" || doctor.gender === gender;
+
+    // ۵. فیلتر وضعیت نوبت خالی
+    const matchesSlot = !status.hasSlot || doctor.nextSlot !== "به زودی";
+
+    return matchesSearch && matchesSpecialty && matchesProvince && matchesCity && matchesGender && matchesSlot;
+  });
+
+  // محاسبات مربوط به نمایش پزشکان در صفحه فعلی (صفحه‌بندی)
+  const indexOfLastDoctor = currentPage * doctorsPerPage;
+  const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
+  const currentDoctors = filteredDoctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
+  const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
 
   return (
     <div className="min-h-screen bg-[#fcfcfc] text-right" dir="rtl">
       
       {/* Search Section */}
       <section className="relative w-full h-[300px] md:h-[400px] flex items-center justify-center overflow-hidden rounded-2xl mt-6">
- 
-  <div className="absolute inset-0 z-0">
-    <img 
-      src="/images/search-bar.png" 
-      alt="Doctor Background" 
-      className="w-full h-full object-cover"
-    />
-    <div className="absolute inset-0 bg-black/40"></div> 
-  </div>
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/images/search-bar.png" 
+            alt="Doctor Background" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40"></div> 
+        </div>
 
-  <div className="relative z-10 w-full max-w-3xl px-4 text-center text-white">
-    <h2 className="text-xl md:text-3xl font-bold mb-2 drop-shadow-md">
-      فقط یک جستجو با بهترین پزشکان فاصله دارید
-    </h2>
-    <p className="text-sm md:text-lg mb-8 opacity-90">
-      در کمتر از ۱ دقیقه نوبت خود را رزرو کنید
-    </p>
+        <div className="relative z-10 w-full max-w-3xl px-4 text-center text-white">
+          <h2 className="text-xl md:text-3xl font-bold mb-2 drop-shadow-md">
+            فقط یک جستجو با بهترین پزشکان فاصله دارید
+          </h2>
+          <p className="text-sm md:text-lg mb-8 opacity-90">
+            در کمتر از ۱ دقیقه نوبت خود را رزرو کنید
+          </p>
 
-    <div className="relative w-full max-w-2xl mx-auto group">
-      <input
-        type="text"
-        placeholder="پزشک یا تخصص مورد نظر خود را جستجو کنید..."
-        className="w-full py-4 px-6 pr-12 rounded-full bg-white/95 text-gray-800 text-right shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-gray-400"
-      />
-      
-     
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-        </svg>
-      </div>
-    </div>
-  </div>
-</section>
+          <div className="relative w-full max-w-2xl mx-auto group">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              placeholder="پزشک یا تخصص مورد نظر خود را جستجو کنید..."
+              className="w-full py-4 px-6 pr-12 rounded-full bg-white/95 text-gray-800 text-right shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-gray-400"
+            />
+            
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
-          {/* Sidebar Filters - جدید */}
+          {/* Sidebar Filters - کامل با انتخاب شهر، استان و استایل‌های درخواستی */}
           <aside className="hidden lg:block bg-white border border-gray-200 rounded-3xl p-6 space-y-6 h-fit sticky top-24 shadow-sm">
             <div className="flex items-center justify-between pb-2 border-b border-gray-50">
                 <h3 className="font-bold text-gray-800">فیلترها</h3>
-                <button className="text-xs text-red-500 hover:underline">حذف همه</button>
+                <button onClick={handleResetFilters} className="text-xs text-red-500 hover:underline">حذف همه</button>
             </div>
 
             {/* جستجو درون فیلتر */}
@@ -117,7 +193,7 @@ export default function SearchPage() {
                   type="text"
                   placeholder="مثلا: دکتر حسینی"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                   className="w-full py-2.5 pr-10 pl-4 border border-gray-100 bg-gray-50 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none"
                 />
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -129,12 +205,28 @@ export default function SearchPage() {
               <label className="block text-xs font-bold text-gray-500 mb-2">تخصص</label>
               <select
                 value={selectedSpecialty}
-                onChange={(e) => setSelectedSpecialty(e.target.value)}
-                className="w-full py-2.5 px-3 border border-gray-100 bg-gray-50 rounded-xl text-sm outline-none cursor-pointer"
+                onChange={(e) => { setSelectedSpecialty(e.target.value); setCurrentPage(1); }}
+                className="w-full py-2.5 px-3 border border-gray-100 bg-gray-50 rounded-xl text-sm outline-none cursor-pointer text-gray-700"
               >
                 <option value="">همه تخصص‌ها</option>
                 <option value="heart">قلب و عروق</option>
                 <option value="internal">داخلی</option>
+                <option value="pediatrics">اطفال</option>
+              </select>
+            </div>
+
+            {/* بیمه طرف قرارداد */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 mb-2">بیمه طرف قرارداد</label>
+              <select
+                value={selectedInsurance}
+                onChange={(e) => setSelectedInsurance(e.target.value)}
+                className="w-full py-2.5 px-3 border border-gray-100 bg-gray-50 rounded-xl text-sm outline-none cursor-pointer text-gray-700"
+              >
+                <option value="">همه بیمه‌ها</option>
+                <option value="tamin">تامین اجتماعی</option>
+                <option value="salamat">بیمه سلامت</option>
+                <option value="iran">بیمه ایران</option>
               </select>
             </div>
 
@@ -142,16 +234,19 @@ export default function SearchPage() {
             <div className="space-y-3">
               <label className="block text-xs font-bold text-gray-500">وضعیت نوبت‌دهی</label>
               <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
-                <input type="checkbox" checked={status.hasSlot} onChange={(e) => setStatus({ ...status, hasSlot: e.target.checked })} className="w-4 h-4 rounded text-blue-600" />
+                <input type="checkbox" checked={status.hasSlot} onChange={(e) => { setStatus({ ...status, hasSlot: e.target.checked }); setCurrentPage(1); }} className="w-4 h-4 rounded text-blue-600" />
                 <span>دارای نوبت خالی</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
                 <input type="checkbox" checked={status.online} onChange={(e) => setStatus({ ...status, online: e.target.checked })} className="w-4 h-4 rounded text-blue-600" />
                 <span>ویزیت آنلاین</span>
               </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
+                <input type="checkbox" checked={status.inPerson} onChange={(e) => setStatus({ ...status, inPerson: e.target.checked })} className="w-4 h-4 rounded text-blue-600" />
+                <span>امکان رزرو حضوری</span>
+              </label>
             </div>
 
-            {/* تجربه کاری */}
             <div>
               <label className="block text-xs font-bold text-gray-500 mb-2">تجربه کاری</label>
               <div className="flex flex-wrap gap-2">
@@ -167,16 +262,56 @@ export default function SearchPage() {
               </div>
             </div>
 
-            {/* جنسیت */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold text-gray-500">موقعیت مکانی</label>
+              <div className="relative">
+                <select
+                  value={selectedProvince}
+                  onChange={(e) => { setSelectedProvince(e.target.value); setCurrentPage(1); }}
+                  className="w-full py-2.5 pl-4 pr-10 border border-gray-100 bg-gray-50 rounded-xl text-sm appearance-none cursor-pointer text-gray-700"
+                >
+                  <option value="">انتخاب استان</option>
+                  <option value="tehran">تهران</option>
+                  <option value="azarbaijan">آذربایجان غربی</option>
+                </select>
+                <ChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+              </div>
+
+              <div className="relative">
+                <select
+                  value={selectedCity}
+                  onChange={(e) => { setSelectedCity(e.target.value); setCurrentPage(1); }}
+                  className="w-full py-2.5 pl-4 pr-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm appearance-none cursor-pointer bg-white text-gray-700 font-medium transition-all duration-200 hover:border-gray-400"
+                >
+                  <option value="" className="text-gray-400 font-sans bg-white py-2">انتخاب شهر</option>
+                  
+                  <option value="tehran-c" className="text-gray-800 font-semibold bg-white py-2 hover:bg-blue-50">تهران</option>
+                  <option value="reye" className="text-gray-700 font-medium bg-white py-2">ری</option>
+                  <option value="shemiranat" className="text-gray-700 font-medium bg-white py-2">شمیرانات</option>
+                  <option value="eslamshahr" className="text-gray-700 font-medium bg-white py-2">اسلامشهر</option>
+                  <option value="shahriar" className="text-gray-700 font-medium bg-white py-2">شهریار</option>
+                  
+                  <option value="urmia" className="text-gray-800 font-semibold bg-white py-2 hover:bg-blue-50">ارومیه</option>
+                  <option value="khoy" className="text-gray-700 font-medium bg-white py-2">خوی</option>
+                  <option value="mahabad" className="text-gray-700 font-medium bg-white py-2">مهاباد</option>
+                  <option value="bukan" className="text-gray-700 font-medium bg-white py-2">بوکان</option>
+                  <option value="miandoab" className="text-gray-700 font-medium bg-white py-2">میاندوآب</option>
+                  <option value="salmas" className="text-gray-700 font-medium bg-white py-2">سلماس</option>
+                </select>
+                <ChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+              </div>
+            </div>
+
+            
             <div>
               <label className="block text-xs font-bold text-gray-500 mb-2">جنسیت پزشک</label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
-                  <input type="radio" name="gender" value="female" onChange={() => setGender("female")} className="w-4 h-4 text-blue-600" />
+                  <input type="radio" name="gender" value="female" checked={gender === "female"} onChange={() => { setGender("female"); setCurrentPage(1); }} className="w-4 h-4 text-blue-600" />
                   <span>خانم</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
-                  <input type="radio" name="gender" value="male" onChange={() => setGender("male")} className="w-4 h-4 text-blue-600" />
+                  <input type="radio" name="gender" value="male" checked={gender === "male"} onChange={() => { setGender("male"); setCurrentPage(1); }} className="w-4 h-4 text-blue-600" />
                   <span>آقا</span>
                 </label>
               </div>
@@ -198,15 +333,43 @@ export default function SearchPage() {
                   <button onClick={() => setSortBy('popular')} className={`px-4 py-2 text-xs font-bold rounded-xl transition ${sortBy === 'popular' ? 'bg-blue-600 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>محبوب‌ترین</button>
                 </div>
               </div>
-              <span className="text-xs text-gray-400 font-medium">۵ پزشک در این منطقه یافت شد</span>
+              <span className="text-xs text-gray-400 font-medium">{filteredDoctors.length} پزشک یافت شد</span>
             </div>
 
             {/* Doctors List */}
             <div className="space-y-4">
-              {doctors.map((doctor) => (
-                <DoctorCard key={doctor.id} doctor={doctor} />
-              ))}
+              {loading ? (
+                <div className="text-center py-12 text-sm text-gray-400 font-bold">در حال بارگذاری لیست پزشکان...</div>
+              ) : currentDoctors.length === 0 ? (
+                <div className="text-center py-12 text-sm text-gray-400 font-bold">پزشکی با فیلترهای انتخاب شده یافت نشد.</div>
+              ) : (
+                currentDoctors.map((doctor) => (
+                  <DoctorCard key={doctor._id} doctor={doctor} router={router} />
+                ))
+              )}
             </div>
+
+           
+            {!loading && totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 pt-6">
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+                  <button
+                    key={pageNumber}
+                    onClick={() => {
+                      setCurrentPage(pageNumber);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={`w-10 h-10 rounded-xl text-sm font-bold transition flex items-center justify-center ${
+                      currentPage === pageNumber
+                        ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                        : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    {pageNumber}
+                  </button>
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </main>
@@ -214,8 +377,8 @@ export default function SearchPage() {
   );
 }
 
-// کامپوننت کارت پزشک
-function DoctorCard({ doctor }: { doctor: Doctor }) {
+
+function DoctorCard({ doctor, router }: { doctor: Doctor; router: any }) {
   return (
     <div className="bg-white p-5 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-md transition flex flex-col md:flex-row gap-6 items-center relative group">
       <div className="absolute top-5 left-6 text-[10px] text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -253,11 +416,11 @@ function DoctorCard({ doctor }: { doctor: Doctor }) {
       </div>
 
       <div className="flex flex-col gap-3 w-full md:w-44 pt-4 md:pt-0 border-t md:border-t-0 md:border-r border-gray-100 md:pr-6">
-        <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-100 transition text-xs">
-          رزرو نوبت نهایی
-        </button>
-        <button className="w-full py-3 bg-white hover:bg-gray-50 text-gray-600 font-bold border border-gray-200 rounded-2xl transition text-xs">
-          مشاهده پروفایل
+        <button 
+          onClick={() => router.push(`/doctors/${doctor._id}`)}
+          className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-100 transition text-xs"
+        >
+          رزرو نوبت 
         </button>
       </div>
     </div>
