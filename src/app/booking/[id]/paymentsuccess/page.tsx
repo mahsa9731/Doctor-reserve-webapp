@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 
 const CheckCircleIcon = () => (
   <svg
@@ -29,12 +29,8 @@ interface PaymentSuccessPageProps {
 
 const PaymentSuccessPage: React.FC<PaymentSuccessPageProps> = ({ params }) => {
   const bookingId = params.id;
-  const [trackingNumber, setTrackingNumber] = useState<string>('');
-
-  useEffect(() => {
-    const randomNum = Math.floor(10000000 + Math.random() * 90000000).toString();
-    setTrackingNumber(randomNum);
-  }, []);
+  const searchParams = useSearchParams();
+  const trackingCode = searchParams.get('code') || '---';
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-black/60 p-4 rtl backdrop-blur-sm">
@@ -52,15 +48,13 @@ const PaymentSuccessPage: React.FC<PaymentSuccessPageProps> = ({ params }) => {
           <p className="mb-6 text-gray-700 leading-relaxed">
             تراکنش شما با موفقیت انجام شد. از اینکه به ما اعتماد کردید، سپاسگزاریم.
             
-            {trackingNumber && (
-              <span className="block mt-4 text-sm font-bold text-gray-500 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                شماره پیگیری: <span className="text-gray-900 font-black tracking-widest">{trackingNumber}</span>
-              </span>
-            )}
+            <span className="block mt-4 text-sm font-bold text-gray-500 bg-gray-50 p-3 rounded-xl border border-gray-100">
+              شماره پیگیری: <span className="text-gray-900 font-black tracking-widest">{trackingCode}</span>
+            </span>
           </p>
 
           <Link
-            href={`/dashboard`} //dashboard in figma!?
+            href={`/profile/appointments`} 
             className="inline-block w-full rounded-lg bg-emerald-500 px-6 py-3 text-center font-semibold text-white shadow-md transition-colors hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-300 active:bg-emerald-700"
           >
             مشاهده نوبت‌ها

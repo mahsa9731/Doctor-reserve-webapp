@@ -1,27 +1,10 @@
 import DoctorCard from '@/Components/doctors/DoctorCard';
 import HealthTestBanner from '@/Components/doctors/HealthTestBanner';
-import FAQItem from '@/Components/FAQItem';
+import FAQ from '@/Components/Faq';
 import ReviewCard from '@/Components/ReviewCard';
 import ArticleCard from '@/Components/ArticleCard';
-
-
-const faqs = [
-    "چگونه می‌توانم نوبت رزرو کنم؟",
-    "چگونه می‌توانم پزشک مورد نظرم را پیدا کنم؟",
-    "آیا دکتر رزرو اپلیکیشن موبایل هم دارد؟",
-    "آیا دکتر رزرو فقط برای شهر خاصی است؟",
-    "چگونه می‌توانم نوبت خود را لغو یا جابجا کنم؟",
-    "آیا می‌توانم برای شخص دیگری نوبت رزرو کنم؟",
-    "چگونه می‌توانم از زمان‌بندی پزشکان مطلع شوم؟",
-    "آیا می‌توانم نظرات سایر بیماران را درباره پزشکان بخوانم؟",
-    "آیا اطلاعات شخصی و پزشکی من در وب‌سایت شما محفوظ می‌ماند؟",
-    "چگونه می‌توانم هزینه ویزیت را پرداخت کنم؟",
-    "چگونه می‌توانم از عضویت پزشکان در وب‌سایت شما اطمینان حاصل کنم؟",
-    "آیا می‌توانم بدون اینترنت نوبت رزرو کنم؟",
-    "چگونه می‌توانم نزدیک‌ترین پزشک به محل سکونت خود را پیدا کنم؟",
-    "آیا می‌توانم نسخه‌های الکترونیکی خود را از طریق وب‌سایت دریافت کنم؟",
-    "در صورت بروز مشکل در رزرو نوبت، چگونه می‌توانم با پشتیبانی تماس بگیرم؟",
-  ];
+import Link from 'next/link';
+import { Clock, Calendar , CheckCircle2} from 'lucide-react';
 
 
 export default function HomePage() {
@@ -39,12 +22,16 @@ export default function HomePage() {
             نوبت دهی آنلاین مطمئن فقط با چند کلیک.
           </p>
 
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700">
+          <Link href="/search">
+         <button className="bg-blue-100/70 text-blue-600 border border-blue-100/50 px-10 py-3.5 rounded-xl font-black text-[14px] transition-all hover:bg-blue-100/60 hover:text-blue-700 active:scale-[0.98] shadow-sm shadow-blue-50/40">
             رزرو نوبت
-          </button>
-           <button className="bg-white-600 text-gray px-8 py-3 rounded-xl font-bold hover:bg-blue-700">
+         </button> 
+          </Link>
+           <Link href="/contact">
+          <button className="bg-blue-100/70 text-blue-600 border border-blue-100/50 px-10 py-3.5 rounded-xl font-black text-[14px] transition-all hover:bg-blue-100/60 hover:text-blue-700 active:scale-[0.98] shadow-sm shadow-blue-50/40">
             پشتیبانی
           </button>
+        </Link>
         </div>
         <div className="md:w-1/2 mt-8 md:mt-0">
           <img src="/images/hospital-profession-people.png" alt="Hero" className="w-full rounded-2xl" />
@@ -55,7 +42,9 @@ export default function HomePage() {
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
     
     <div className="border border-slate-200 rounded-xl p-6 flex items-start gap-4">
-      <div className="text-2xl">🕒</div>
+      <div className="text-2xl">
+        <Clock className="w-5 h-5 text-blue-600" strokeWidth={2.5} />
+      </div>
       <div>
         <h3 className="font-bold text-slate-800 mb-1">دسترسی ۲۴ ساعته به پزشکان</h3>
         <p className="text-slate-500 text-sm">در هر زمانی می‌توانید نوبت خود را رزرو کنید</p>
@@ -63,7 +52,9 @@ export default function HomePage() {
     </div>
 
     <div className="border border-slate-200 rounded-xl p-6 flex items-start gap-4">
-      <div className="text-2xl">💬</div>
+      <div className="text-2xl">
+        <CheckCircle2 className="w-6 h-6" strokeWidth={2.5} />
+      </div>
       <div>
         <h3 className="font-bold text-slate-800 mb-1">اطمینان از انتخاب مجرب‌ترین پزشکان</h3>
         <p className="text-slate-500 text-sm">بهترین پزشکان را با توجه به نظرات کاربران انتخاب کنید</p>
@@ -71,7 +62,9 @@ export default function HomePage() {
     </div>
 
     <div className="border border-slate-200 rounded-xl p-6 flex items-start gap-4">
-      <div className="text-2xl">📅</div>
+      <div className="text-2xl">
+        <Calendar className="w-5 h-5 text-emerald-600" strokeWidth={2.5} />
+      </div>
       <div>
         <h3 className="font-bold text-slate-800 mb-1">مدیریت و تغییر نوبت‌ها به راحتی</h3>
         <p className="text-slate-500 text-sm">توانایی لغو، تغییر و مدیریت نوبت‌ها به راحتی</p>
@@ -241,37 +234,14 @@ export default function HomePage() {
 </section>
 
     <div className="bg-zinc-50 min-h-screen py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        
-        <h1 className="text-2xl font-bold text-zinc-800 mb-8 text-left md:text-right">
-          سوالات متداول
-        </h1>
-
-       
+      <div className="max-w-4xl mx-auto">     
         <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden relative">
-          
-          
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03]">
              <span className="text-[400px] font-bold text-zinc-900">؟</span>
           </div>
 
           <div className="divide-y divide-zinc-100 relative z-10">
-            {faqs.map((question, index) => (
-              <details key={index} className="group p-4 md:p-6 transition-all hover:bg-zinc-50">
-                <summary className="flex items-center justify-between cursor-pointer list-none">
-                  <span className="text-zinc-700 font-medium text-sm md:text-base leading-7">
-                    {question}
-                  </span>
-                  <span className="text-zinc-400 group-open:rotate-180 transition-transform duration-300">
-                   
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                  </span>
-                </summary>
-                <div className="mt-4 text-zinc-500 text-sm leading-7 text-justify">
-                  لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.
-                </div>
-              </details>
-            ))}
+            <FAQ />
           </div>
         </div>
       </div>

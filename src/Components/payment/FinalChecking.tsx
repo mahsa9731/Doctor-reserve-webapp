@@ -4,10 +4,11 @@ interface FinalCheckingProps {
   dynamicDate: string | null;
   dynamicTime: string | null;
   patientName: string;
+  docaddress: string;
 }
 
-export default function FinalChecking({ dynamicDate, dynamicTime, patientName }: FinalCheckingProps) {
-  const address = "تهران، ستارخان، خیابان هشتم، پلاک ۲۰";
+export default function FinalChecking({ dynamicDate, dynamicTime, patientName , docaddress }: FinalCheckingProps) {
+  const address = {docaddress};
   const visitType = "حضوری";
 
   const displayDate = dynamicDate || "تعیین نشده";
@@ -23,7 +24,7 @@ export default function FinalChecking({ dynamicDate, dynamicTime, patientName }:
         <div>
           <span className="text-xs text-gray-400 font-bold block">آدرس مطب</span>
           <p className="text-[13px] text-gray-800 font-black mt-1 leading-6">
-            {address}
+            {docaddress || 'در حال بارگذاری آدرس...'}
           </p>
         </div>
       </div>

@@ -6,24 +6,26 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import DateObject from "react-date-object";
 
-
-const initialTimeSlots = [
-  { time: "۰۸:۳۰", isFull: true },
-  { time: "۰۹:۴۵", isFull: false },
-  { time: "۱۱:۰۰", isFull: false },
-  { time: "۱۴:۱۵", isFull: true },
-  { time: "۱۶:۳۰", isFull: false },
-  { time: "۱۸:۰۰", isFull: false },
-];
-interface DoctorCalendarProps {
-  doctorId: string | number;
+interface TimeSlot {
+  time: string;
+  isBooked: boolean;
 }
 
-export default function DoctorCalendar({ doctorId }: DoctorCalendarProps) {
+interface AvailableSlot {
+  date: string;
+  times: any[]; 
+}
+
+interface DoctorCalendarProps {
+  doctorId: string | number;
+  doctorSlots: AvailableSlot[];
+}
+
+export default function DoctorCalendar({ doctorId, doctorSlots = [] }: DoctorCalendarProps) {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<any>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [currentSlots, setCurrentSlots] = useState(initialTimeSlots);
+  const [currentSlots, setCurrentSlots] = useState<TimeSlot[]>([]);
   
   const today = new DateObject({ calendar: persian, locale: persian_fa });
 
@@ -32,12 +34,25 @@ export default function DoctorCalendar({ doctorId }: DoctorCalendarProps) {
     setSelectedDate(date);
     setSelectedTime(null);
 
-    const isPastDay = date.valueOf() < today.set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).valueOf();
-    
-    if (isPastDay) {
-      setCurrentSlots(initialTimeSlots.map(s => ({ ...s, isFull: true })));
+    const formattedSelectedDate = date.format("dddd DD MMMM");
+
+    const matchedSlot = doctorSlots.find(
+      (slot) => slot.date === formattedSelectedDate
+    );
+
+    if (matchedSlot) {
+      
+      const mappedTimes = matchedSlot.times.map((t: any) => {
+        if (typeof t === "string") {
+          return { time: t, isBooked: false };
+        }
+      
+        const isSlotBooked = t.status === 'scheduled' || t.isBooked === true;
+        return { time: t.time, isBooked: isSlotBooked };
+      });
+      setCurrentSlots(mappedTimes);
     } else {
-      setCurrentSlots(initialTimeSlots.map(s => ({ ...s, isFull: Math.random() < 0.4 })));
+      setCurrentSlots([]);
     }
   };
 
@@ -60,7 +75,7 @@ export default function DoctorCalendar({ doctorId }: DoctorCalendarProps) {
             minDate={today}
             shadow={false}
             className="modern-calendar-core"
-          />
+            />
         </div>
       </div>
 
@@ -71,32 +86,38 @@ export default function DoctorCalendar({ doctorId }: DoctorCalendarProps) {
         </div>
 
         {selectedDate ? (
-          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-            {currentSlots.map((slot) => {
-              const isSelected = slot.time === selectedTime;
-              return (
-                <button
-                  key={slot.time}
-                  disabled={slot.isFull}
-                  onClick={() => setSelectedTime(slot.time)}
-                  className={`relative py-2.5 sm:py-3 rounded-2xl text-[13px] sm:text-[14px] font-bold transition-all duration-200 border-2 overflow-hidden ${
-                    slot.isFull
-                      ? "bg-gray-100 text-gray-300 border-transparent cursor-not-allowed opacity-60"
-                      : isSelected
-                      ? "bg-blue-600 text-white border-blue-600 shadow-[0_10px_20px_rgba(37,99,235,0.2)] scale-105 z-10"
-                      : "bg-white text-gray-600 border-gray-100 hover:border-blue-200 hover:bg-blue-50/30"
-                  }`}
-                >
-                  {slot.time}
-                  {slot.isFull && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-[120%] h-[1.5px] bg-gray-300 -rotate-12"></div>
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          currentSlots.length > 0 ? (
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+              {currentSlots.map((slot, index) => {
+                const isSelected = slot.time === selectedTime;
+                return (
+                  <button
+                    key={`${slot.time}-${index}`}
+                    disabled={slot.isBooked}
+                    onClick={() => setSelectedTime(slot.time)}
+                    className={`relative py-2.5 sm:py-3 rounded-2xl text-[13px] sm:text-[14px] font-bold transition-all duration-200 border-2 overflow-hidden ${
+                      slot.isBooked
+                        ? "bg-gray-100 text-gray-300 border-transparent cursor-not-allowed opacity-60"
+                        : isSelected
+                        ? "bg-blue-600 text-white border-blue-600 shadow-[0_10px_20px_rgba(37,99,235,0.2)] scale-105 z-10"
+                        : "bg-white text-gray-600 border-gray-100 hover:border-blue-200 hover:bg-blue-50/30"
+                    }`}
+                  >
+                    {slot.time}
+                    {slot.isBooked && (
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-[120%] h-[1.5px] bg-gray-300 -rotate-12"></div>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-6 sm:py-8 text-center bg-gray-50 rounded-[20px] border-2 border-dashed border-gray-100">
+              <p className="text-[12px] sm:text-[13px] text-gray-400">نوبت خالی برای این روز تعریف نشده است</p>
+            </div>
+          )
         ) : (
           <div className="py-6 sm:py-8 text-center bg-gray-50 rounded-[20px] border-2 border-dashed border-gray-100">
             <p className="text-[12px] sm:text-[13px] text-gray-400">لطفاً برای مشاهده ساعت‌ها، یک روز را انتخاب کنید</p>
@@ -104,18 +125,17 @@ export default function DoctorCalendar({ doctorId }: DoctorCalendarProps) {
         )}
       </div>
 
-      
       <button
-  onClick={() => router.push(`/booking/${doctorId}/info?date=${selectedDate}&time=${selectedTime}`)}
-  disabled={!selectedDate || !selectedTime}
-  className={`w-full mt-6 sm:mt-8 py-3.5 sm:py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold transition-all duration-300 ${
-    selectedDate && selectedTime
-      ? "bg-blue-600 text-white hover:bg-blue-700 shadow-[0_12px_24px_rgba(37,99,235,0.25)]"
-      : "bg-gray-100 text-gray-400 cursor-not-allowed"
-  }`}
->
-  رزرو نوبت
-</button>
+        onClick={() => router.push(`/booking/${doctorId}/info?date=${selectedDate.format("dddd DD MMMM")}&time=${selectedTime}`)}
+        disabled={!selectedDate || !selectedTime}
+        className={`w-full mt-6 sm:mt-8 py-3.5 sm:py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold transition-all duration-300 ${
+          selectedDate && selectedTime
+            ? "bg-blue-600 text-white hover:bg-blue-700 shadow-[0_12px_24px_rgba(37,99,235,0.25)]"
+            : "bg-gray-100 text-gray-400 cursor-not-allowed"
+        }`}
+      >
+        رزرو نوبت
+      </button>
 
       <style jsx global>{`
         .custom-calendar-wrapper .rmdp-wrapper {

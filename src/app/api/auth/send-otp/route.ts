@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       phoneNumber,
       code: otpCode,
       createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 2 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       isUsed: false
     });
 

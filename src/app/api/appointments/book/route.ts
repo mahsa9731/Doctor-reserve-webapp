@@ -5,15 +5,13 @@ import Appointment from '@/models/Appointment';
 
 export async function POST(req: Request) {
   try {
-    
     await connectDB();
     
-   
     const { doctorId, date, time, userPhone, patientName, trackingCode } = await req.json();
 
     
-    if (!trackingCode) {
-      return NextResponse.json({ message: "کد پیگیری فرانت‌اَند ارسال نشده است." }, { status: 400 });
+    if (!doctorId || !date || !time || !userPhone || !patientName || !trackingCode) {
+      return NextResponse.json({ message: "تمامی فیلدها الزامی هستند." }, { status: 400 });
     }
 
     
@@ -23,12 +21,21 @@ export async function POST(req: Request) {
     }
 
    
-    const doctor = await Doctor.findById(doctorId);
+    const doctor = await Doctor.findOne({
+      _id: doctorId,
+      "availableSlots": {
+        $elemMatch: {
+          date: date,
+          times: { $elemMatch: { time: time, isBooked: false } }
+        }
+      }
+    });
+
     if (!doctor) {
-      return NextResponse.json({ message: "پزشک مورد نظر یافت نشد." }, { status: 404 });
+      return NextResponse.json({ message: "این نوبت دیگر ظرفیت ندارد یا قبلاً رزرو شده است." }, { status: 404 });
     }
 
-   
+    
     const newAppointment = await Appointment.create({
       userPhone,
       patientName,
@@ -45,13 +52,18 @@ export async function POST(req: Request) {
       trackingCode
     });
 
-   
+    
     await Doctor.updateOne(
-      { _id: doctorId, "availableSlots.date": date },
-      { $pull: { "availableSlots.$.times": time } }
+      { _id: doctorId },
+      { $set: { "availableSlots.$[outer].times.$[inner].isBooked": true } },
+      {
+        arrayFilters: [
+          { "outer.date": date },
+          { "inner.time": time }
+        ]
+      }
     );
 
-  
     return NextResponse.json({ success: true, appointment: newAppointment }, { status: 201 });
 
   } catch (error: any) {

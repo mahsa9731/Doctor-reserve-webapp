@@ -20,6 +20,10 @@ interface DoctorProfileProps {
   doctorId: string;
 }
 
+ const toPersianNumber = (num: number | string) => {
+    return num.toLocaleString('fa-IR');
+  };
+
 export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [doctor, setDoctor] = useState<DoctorData | null>(null);
@@ -38,14 +42,14 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
         if (data) {
           setDoctor({
             _id: data._id,
-            name: data.name || "دکتر زهرا وارسته",
-            specialty: data.specialty || "متخصص قلب و عروق",
+            name: data.name ,
+            specialty: data.specialty ,
             rating: data.rating ? String(data.rating) : "۴.۸",
             reviews: data.reviewsCount ? String(data.reviewsCount) : "۱۰۵",
-            address: data.address || "تهران، ستارخان، خیابان هشتم، پلاک ۲۰",
+            address: data.address ,
             nextSlot: data.availableSlots && data.availableSlots[0] ? data.availableSlots[0].date : "دوشنبه ۲۷ دی",
-            image: data.avatar || "/images/DoctorPicture.png",
-            nizamCode: data.medicalCode || "۴۳۳۶۳",
+            image: data.avatar ,
+            nizamCode: data.medicalCode ,
             bio: data.description || "توضیحاتی برای این پزشک ثبت نشده است."
           });
         }
@@ -87,11 +91,11 @@ export default function DoctorProfile({ doctorId }: DoctorProfileProps) {
           </div>
           
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-black text-gray-900">{doctor.rating}</span>
+            <span className="text-2xl font-black text-gray-900">{toPersianNumber(doctor.rating)}</span>
             <div className="flex text-yellow-400">
               {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}
             </div>
-            <span className="text-gray-400 text-sm">({doctor.reviews} نظر)</span>
+            <span className="text-gray-400 text-sm">({toPersianNumber(doctor.reviews)} نظر)</span>
           </div>
 
           <div className="flex items-center gap-2 bg-gray-50 w-fit px-3 py-1.5 rounded-xl border border-gray-100">

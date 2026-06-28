@@ -8,13 +8,11 @@ export default function ProfilePage() {
   const [saveLoading, setSaveLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // کنترل نمایش مدال موفقیت
+  const [showSuccessModal, setShowSuccessModal] = useState(false); 
+  const [avatar, setAvatar] = useState('/avatars/default.png');
+  const fileInputRef = useRef<HTMLInputElement>(null); 
 
-  // وضعیت تصویر آواتار
-  const [avatar, setAvatar] = useState('/avatars/default.png'); // تصویر پیش‌فرض
-  const fileInputRef = useRef<HTMLInputElement>(null); // برای دسترسی به اینپوت فایل
-
-  // وضعیت اطلاعات کاربر
+ 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -26,7 +24,7 @@ export default function ProfilePage() {
     phoneNumber: '',
   });
 
-  // ۱. واکشی اطلاعات واقعی کاربر از دیتابیس هنگام لود صفحه
+ 
   useEffect(() => {
     async function fetchUserData() {
       try {
@@ -43,7 +41,7 @@ export default function ProfilePage() {
             email: data.email || '',
             phoneNumber: data.phoneNumber || '',
           });
-          // اگر تصویر آواتار در دیتابیس بود، آن را ست کن
+         
           if (data.avatar) {
             setAvatar(data.avatar);
           }
@@ -60,11 +58,11 @@ export default function ProfilePage() {
     fetchUserData();
   }, []);
 
-  // ۲. ارسال اطلاعات ویرایش شده به دیتابیس منگودی‌بی
+  
   const handleUpdateProfile = async () => {
     setError('');
 
-    // ولیدیشن فیلدهای اجباری
+   
     if (!formData.firstName.trim()) {
       setError('وارد کردن «نام» الزامی است.');
       return;
@@ -79,14 +77,14 @@ export default function ProfilePage() {
       const res = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, avatar }), // تصویر آواتار را هم بفرست
+        body: JSON.stringify({ ...formData, avatar }), 
       });
 
       const data = await res.json();
 
       if (res.ok) {
         setIsEditing(false);
-        setShowSuccessModal(true); // به جای alert، مدال زیبا را نشان بده
+        setShowSuccessModal(true); 
       } else {
         setError(data.message || 'خطا در ذخیره‌سازی اطلاعات.');
       }
@@ -97,37 +95,37 @@ export default function ProfilePage() {
     }
   };
 
-  // ۳. هندل کردن انتخاب فایل تصویر
+  
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // ولیدیشن نوع فایل (فقط تصویر)
+     
       if (!file.type.startsWith('image/')) {
         setError('لطفاً یک فایل تصویر انتخاب کنید.');
         return;
       }
-      // ولیدیشن حجم فایل (مثلاً حداکثر ۲ مگابایت)
+     
       if (file.size > 2 * 1024 * 1024) {
         setError('حجم تصویر نباید بیشتر از ۲ مگابایت باشد.');
         return;
       }
 
-      // آپلود فایل به سرور
+    
       const reader = new FileReader();
       reader.onloadend = async () => {
-        // تبدیل تصویر به فرمت Base64 برای ارسال به سرور
+       
         const base64Image = reader.result as string;
 
         try {
           const res = await fetch('/api/user/profile', {
-            method: 'PUT', // یا POST، بسته به API طراحی شده
+            method: 'PUT', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...formData, avatar: base64Image }),
           });
 
           if (res.ok) {
-            setAvatar(base64Image); // تصویر را در کامپوننت ست کن
-            setShowSuccessModal(true); // نشان دادن موفقیت
+            setAvatar(base64Image); 
+            setShowSuccessModal(true);
           } else {
             const data = await res.json();
             setError(data.message || 'خطا در آپلود تصویر.');
@@ -136,7 +134,7 @@ export default function ProfilePage() {
           setError('خطا در ارتباط با سرور.');
         }
       };
-      reader.readAsDataURL(file); // شروع خواندن فایل
+      reader.readAsDataURL(file); 
     }
   };
 
@@ -153,17 +151,17 @@ export default function ProfilePage() {
       className="w-full bg-white font-sans antialiased relative min-h-screen pb-12"
       dir="rtl"
     >
-      {/* بدنه اصلی صفحه پروفایل */}
+      
       <main className="max-w-[1000px] mx-auto mt-12 px-6">
         <h1 className="text-[20px] font-black text-gray-900 mb-8 text-right">
           پروفایل کاربری
         </h1>
 
-        {/* باکس اصلی اطلاعات با ساختار گرید فیگما */}
+      
         <div className="w-full border border-blue-100 rounded-2xl p-8 flex flex-row gap-8 items-start relative bg-white shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
-          {/* بخش راست: فیلدهای اطلاعاتی */}
+         
           <div className="flex-1 grid grid-cols-2 gap-y-8 gap-x-12 text-right">
-            {/* نام */}
+           
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 نام <span className="text-red-500">*</span>
@@ -184,7 +182,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* نام خانوادگی */}
+          
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 نام خانوادگی <span className="text-red-500">*</span>
@@ -205,7 +203,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* کد ملی */}
+          
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 کد ملی:
@@ -226,7 +224,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* سال تولد */}
+          
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 سال تولد:
@@ -247,7 +245,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* جنسیت */}
+           
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 جنسیت:
@@ -270,7 +268,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* شهر */}
+           
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 شهر:
@@ -291,7 +289,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* شماره موبایل (غیر قابل ویرایش) */}
+           
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 شماره موبایل:
@@ -304,7 +302,7 @@ export default function ProfilePage() {
               </span>
             </div>
 
-            {/* ایمیل */}
+           
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
                 ایمیل:
@@ -326,7 +324,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* دکمه‌ها و کادر خطا */}
+          
             <div className="col-span-2 mt-4 flex flex-col gap-3">
               {error && (
                 <p className="text-[12px] font-bold text-red-500 bg-red-50 border border-red-100 px-4 py-2.5 rounded-xl">
@@ -366,7 +364,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* بخش چپ: تصویر آواتار */}
+        
           <div className="w-[180px] flex flex-col items-center gap-4 border-r border-gray-100 pr-8 self-stretch justify-start pt-4">
             <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-blue-100 p-1 bg-gray-50">
               <img
@@ -376,16 +374,16 @@ export default function ProfilePage() {
               />
             </div>
 
-            {/* اینپوت مخفی برای آپلود فایل */}
+          
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileChange}
-              style={{ display: 'none' }} // پنهان کن
+              style={{ display: 'none' }} 
             />
 
             <button
-              onClick={() => fileInputRef.current?.click()} // کلیک بر روی اینپوت فایل
+              onClick={() => fileInputRef.current?.click()} 
               className="w-full h-9 border border-blue-200 hover:bg-blue-50/50 rounded-xl text-[11px] font-bold text-blue-600 flex items-center justify-center gap-1.5 transition-all"
             >
               <svg
@@ -410,15 +408,14 @@ export default function ProfilePage() {
 
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* لایه تاریک بک‌گراند با افکت بلور */}
+         
           <div
             className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity"
             onClick={() => setShowSuccessModal(false)}
           ></div>
 
-          {/* بدنه اصلی مدال پاپ‌آپ */}
+         
           <div className="bg-white rounded-2xl p-8 max-w-sm w-full border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.1)] text-center relative z-10 transform transition-all scale-100 animate-in fade-in zoom-in-95 duration-200">
-            {/* دایره سبز و تیک متحرک */}
             <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-100">
               <svg
                 className="w-8 h-8 text-green-500 animate-bounce"

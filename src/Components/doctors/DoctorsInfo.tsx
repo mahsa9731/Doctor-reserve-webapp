@@ -2,26 +2,28 @@ import Image from 'next/image';
 import { Star } from 'lucide-react'; 
 
 interface DoctorInfoCardProps {
-  name?: string;
-  specialty?: string;
-  rating?: number;
-  reviewsCount?: number;
-  medicalCode?: string;
-  address?: string;
-  availableTime?: string;
-  imageUrl?: string;
+  name: string;
+  specialty: string;
+  rating: number;
+  reviewsCount: number;
+  medicalCode: string;
+  address: string;
+  imageUrl: string;
+  selectedDate?: string; 
+  selectedTime?: string; 
 }
 
 export default function DoctorInfoCard({
-  name = "دکتر زهرا وارسته",
-  specialty = "متخصص قلب و عروق",
-  rating = 4.8,
-  reviewsCount = 105,
-  medicalCode = "۴۳۳۶۳",
-  address = "تهران، ستارخان، خیابان هشتم، پلاک ۲۰",
-  imageUrl = "/images/DoctorPicture.png"
+  name,
+  specialty,
+  rating,
+  reviewsCount,
+  medicalCode,
+  address,
+  imageUrl,
 }: DoctorInfoCardProps) {
-  const toPersianNumber = (num: number) => {
+  
+  const toPersianNumber = (num: number | string) => {
     return num.toLocaleString('fa-IR');
   };
   
@@ -62,7 +64,7 @@ export default function DoctorInfoCard({
 
         <div className="relative w-full sm:w-[140px] h-[140px] shrink-0 mx-auto sm:mx-0">
           <Image
-            src={imageUrl} 
+            src={imageUrl || "/images/DoctorPicture.png"} 
             alt={name}
             fill
             className="rounded-[20px] object-cover border-2 border-gray-50 shadow-sm"

@@ -4,19 +4,16 @@ import { useState, useEffect, useRef } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [step, setStep] = useState<'login' | 'otp'>('login'); // مدیریت مراحل لاگین
+  const [step, setStep] = useState<'login' | 'otp'>('login'); 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  // مدیریت کادرهای ۵ رقمی کد تایید مطابق طرح فیگما
   const [otp, setOtp] = useState<string[]>(new Array(5).fill(''));
   const inputRefs = useRef<HTMLInputElement[]>([]);
   
-  // تایمر معکوس (۱:۳۵ زمان فیگما = ۹۵ ثانیه)
   const [timeLeft, setTimeLeft] = useState(300);
 
-  // افکت برای مدیریت زمان تایمر OTP
+  
   useEffect(() => {
     if (step !== 'otp' || timeLeft <= 0) return;
     const timer = setInterval(() => {
@@ -25,7 +22,7 @@ export default function LoginPage() {
     return () => clearInterval(timer);
   }, [timeLeft, step]);
 
-  // فرمت زمان به MM:SS
+ 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -33,13 +30,14 @@ export default function LoginPage() {
   };
 
   const formatPhoneNumber = (phone: string) => {
-  if (phone.length === 11) {
-    // استفاده از کاراکترهای کنترل جهت (RLO) برای تثبیت نمایش صحیح شماره موبایل در متن فارسی
-    return `\u202B${phone.substring(0, 4)}***${phone.substring(7)}\u20AC`;
-  }
-  return phone;
-};
-  // هندلر ارسال پیامک (مرحله اول)
+    if (phone.length === 11) {
+     
+     return `${phone.substring(0, 4)}***${phone.substring(7)}`;
+    }
+    return phone;
+  };
+
+  
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -71,7 +69,7 @@ export default function LoginPage() {
     }
   };
 
-  // جابجایی خودکار بین کادرهای ورودی کد تایید
+ 
   const handleOtpChange = (value: string, index: number) => {
     if (isNaN(Number(value))) return;
 
@@ -79,98 +77,86 @@ export default function LoginPage() {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // فوکوس روی کادر بعدی در صورت پر شدن (چون چپ به راست است، به ایندکس بعدی می‌رود)
+    
     if (value !== '' && index < 4) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleOtpKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    // برگشت به کادر قبلی در صورت زدن پاک‌کن
+    
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // هندلر تایید نهایی کد (مرحله دوم)
+  //2
   const handleVerifyOtp = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  const fullOtp = otp.join(''); // چسباندن آرایه ۵ رقمی به یک رشته واحد
+    e.preventDefault();
+    setError('');
+    const fullOtp = otp.join(''); 
 
-  if (fullOtp.length < 5) {
-    setError('لطفاً کد تایید ۵ رقمی را کامل وارد کنید.');
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const res = await fetch('/api/auth/verify-otp', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phoneNumber, otp: fullOtp }), // ارسال شماره و کد به بک‌اند
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      window.location.href = '/profile';
-      
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-      }
-      
-      setTimeout(() => {
-    router.push('/profile');
-  }, 100); 
-    } else {
-      setError(data.message || 'کد تایید اشتباه است.');
+    if (fullOtp.length < 5) {
+      setError('لطفاً کد تایید ۵ رقمی را کامل وارد کنید.');
+      return;
     }
-  } catch (err) {
-    setError('خطا در ارتباط با سرور. لطفا مجددا تلاش کنید.');
-  } finally {
-    setLoading(false);
-  }
-};
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber, otp: fullOtp }), 
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        window.location.href = '/profile';
+        
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        
+        setTimeout(() => {
+          router.push('/profile');
+        }, 100); 
+      } else {
+        setError(data.message || 'کد تایید اشتباه است.');
+      }
+    } catch (err) {
+      setError('خطا در ارتباط با سرور. لطفا مجددا تلاش کنید.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 w-screen h-screen bg-white flex items-center font-sans antialiased select-none p-4 overflow-auto" dir="rtl">
       
-      <div className="w-full max-w-[730px] h-[640px] flex flex-row rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 bg-white mx-auto flex-shrink-0" dir="rtl">
+      <div className="w-full max-w-[340px] md:max-w-[730px] h-[640px] flex flex-row rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 bg-white mx-auto flex-shrink-0" dir="rtl">
         
-        
-        <div className="w-1/2 h-full bg-white flex flex-col items-center justify-center px-10 box-border">
+        <div className="w-full md:w-1/2 h-full bg-white flex flex-col items-center justify-center px-6 md:px-10 box-border">
           <div className="w-full max-w-[280px] text-center flex flex-col items-center justify-center">
-            
-           
-            {step === 'login' ? (
-              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100/60 shadow-sm p-2.5 mb-5">
-                <img src="/brand/Logo.png" alt="Logo" className="w-full h-full object-contain" />
-              </div>
-            ) : (
-             
-              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100/60 shadow-sm mb-5 text-blue-600">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-              </div>
-            )}
+            <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100/60 shadow-sm p-2.5 mb-5">
+              <img src="/brand/Logo.png" alt="Logo" className="w-full h-full object-contain" />
+            </div>
 
             <h2 className="text-[18px] font-black text-gray-900 mb-1.5">به دکتر رزرو خوش آمدید</h2>
             
             <p className="text-[12px] text-gray-400 mb-6 leading-5">
-  {step === 'login' ? (
-    'برای ادامه شماره موبایل خود را وارد نمایید.'
-  ) : (
-    <span className="flex items-center justify-center gap-1 flex-wrap" dir="rtl">
-      <span>کد ارسال شده به شماره</span>
-      <span className="font-semibold text-gray-700 tracking-wide inline-block" dir="rtl">
-        {formatPhoneNumber(phoneNumber)}
-      </span>
-      <span>را وارد کنید</span>
-    </span>
-  )}
-</p>
+              {step === 'login' ? (
+                'برای ادامه شماره موبایل خود را وارد نمایید.'
+              ) : (
+                <span className="flex items-center justify-center gap-1 flex-wrap" dir="rtl">
+                  <span>کد ارسال شده به شماره</span>
+                  <span className="font-semibold text-gray-700 tracking-wide inline-block" dir="ltr">
+                    {formatPhoneNumber(phoneNumber)}
+                  </span>
+                  <span>را وارد کنید</span>
+                </span>
+              )}
+            </p>
 
             {error && (
               <div className="w-full mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-[11px] font-bold text-right border border-red-100">
@@ -178,7 +164,6 @@ export default function LoginPage() {
               </div>
             )}
 
-           
             {step === 'login' && (
               <form onSubmit={handleSendOtp} className="w-full space-y-4 text-right">
                 <div>
@@ -204,7 +189,6 @@ export default function LoginPage() {
               </form>
             )}
 
-            
             {step === 'otp' && (
               <form onSubmit={handleVerifyOtp} className="w-full flex flex-col items-center">
                 <div className="flex gap-2 mb-4 justify-center" dir="ltr">
@@ -223,7 +207,6 @@ export default function LoginPage() {
                   ))}
                 </div>
 
-               
                 <div className="text-center mb-5">
                   <div className="text-[13px] font-mono font-bold text-gray-700">{formatTime(timeLeft)}</div>
                   {timeLeft > 0 ? (
@@ -260,7 +243,8 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="w-1/2 h-full bg-[#FAFAFA] flex items-center justify-center relative overflow-hidden box-border border-r border-gray-50">
+        
+        <div className="hidden md:flex w-1/2 h-full bg-[#FAFAFA] items-center justify-center relative overflow-hidden box-border border-r border-gray-50">
           <img 
             src="/images/Stethoscope.svg" 
             alt="Stethoscope" 
