@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, ThumbsUp, ThumbsDown, ChevronLeft, Check } from 'lucide-react';
@@ -17,10 +17,79 @@ export default function DoctorReviewSubmit({ doctorId }: DoctorReviewSubmitProps
   const [comment, setComment] = useState<string>('');
   const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const [doctor, setDoctor] = useState<any>(null);
+  const [loadingDoctor, setLoadingDoctor] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false); 
+  
+  useEffect(() => {
+    async function fetchDoctorInfo() {
+      if (!doctorId) return;
+      try {
+        setLoadingDoctor(true);
+  
+        const res = await fetch(`/api/doctors/${doctorId}`);
+        const data = await res.json();
+        
+        if (data) {
+          setDoctor({
+            name: data.name,
+            specialty: data.specialty,
+            nizamCode: data.medicalCode || "ثبت نشده",
+            image: data.avatar || "/images/DoctorPicture.png" 
+          });
+        }
+      } catch (error) {
+        console.error("خطا در دریافت اطلاعات پزشک:", error);
+      } finally {
+        setLoadingDoctor(false);
+      }
+    }
+    fetchDoctorInfo();
+  }, [doctorId]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  
+  if (loadingDoctor) {
+    return (
+      <div className="w-full text-center py-12 text-sm font-bold text-gray-400" dir="rtl">
+        در حال بارگذاری اطلاعات پزشک...
+      </div>
+    );
+  }
+  
+
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowSuccessModal(true);
+    if (!acceptTerms || rating === 0 || submitting) return;
+
+    try {
+      setSubmitting(true);
+
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          doctorId,
+          rating,
+          recommendation,
+          comment,
+        }),
+      });
+
+      if (response.ok) {
+        setShowSuccessModal(true);
+      } else {
+        const errData = await response.json();
+        alert(errData.message || "خطا در ثبت نظر. لطفاً دوباره تلاش کنید.");
+      }
+    } catch (error) {
+      console.error("خطای ارتباط با سرور:", error);
+      alert("خطایی در اتصال به سرور رخ داد.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -31,21 +100,21 @@ export default function DoctorReviewSubmit({ doctorId }: DoctorReviewSubmitProps
           <div className="flex items-center gap-4">
             <div className="relative w-16 h-16 shrink-0">
               <Image
-                src="/images/DoctorPicture.png" 
-                alt="دکتر زهرا وارسته"
+                src={doctor?.image} 
+                alt={doctor?.name || "تصویر پزشک"}
                 fill
                 className="rounded-2xl object-cover border border-gray-100 shadow-sm"
               />
             </div>
             <div className="text-right">
-              <h1 className="text-lg font-black text-gray-900">دکتر زهرا وارسته</h1>
-              <p className="text-gray-400 font-bold text-sm mt-0.5">متخصص قلب و عروق</p>
+              <h1 className="text-lg font-black text-gray-900">{doctor?.name}</h1>
+              <p className="text-gray-400 font-bold text-sm mt-0.5">{doctor?.specialty}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 text-gray-500 font-bold text-sm">
             <Image src="/icons/CheckCircle.svg" alt="نظام پزشکی" width={16} height={16} />
-            <span>کد نظام پزشکی: ۴۳۳۶۳</span>
+            <span>کد نظام پزشکی: {doctor?.nizamCode}</span>
           </div>
         </div>
 
@@ -79,7 +148,7 @@ export default function DoctorReviewSubmit({ doctorId }: DoctorReviewSubmitProps
           <button
             type="button"
             onClick={() => setRecommendation('no')}
-            className={`flex items-center justify-center gap-2 rounded-xl py-3.5 px-4 text-sm font-bold border transition-all ${
+            className={`flex items-center justify-center gap-2 rounded-xl py-3.5 px-4 text-sm font-bold border transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-sm ${
               recommendation === 'no' ? 'border-red-500 bg-red-50/50 text-red-600' : 'border-gray-200 bg-white text-gray-500'
             }`}
           >
@@ -90,7 +159,7 @@ export default function DoctorReviewSubmit({ doctorId }: DoctorReviewSubmitProps
           <button
             type="button"
             onClick={() => setRecommendation('yes')}
-            className={`flex items-center justify-center gap-2 rounded-xl py-3.5 px-4 text-sm font-bold border transition-all ${
+            className={`flex items-center justify-center gap-2 rounded-xl py-3.5 px-4 text-sm font-bold border transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-sm ${
               recommendation === 'yes' ? 'border-emerald-500 bg-emerald-50/50 text-emerald-600' : 'border-gray-200 bg-white text-gray-500'
             }`}
           >
@@ -116,10 +185,10 @@ export default function DoctorReviewSubmit({ doctorId }: DoctorReviewSubmitProps
           
           <button
             type="submit"
-            disabled={!acceptTerms || rating === 0}
+            disabled={!acceptTerms || rating === 0 || submitting}
             className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-8 py-3.5 text-sm font-black text-white shadow-md transition-all hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400"
           >
-            <span>ارسال نظر</span>
+            <span>{submitting ? 'در حال ارسال...' : 'ارسال نظر'}</span>
             <ChevronLeft size={16} />
           </button>
 

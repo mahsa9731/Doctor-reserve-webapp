@@ -13,7 +13,7 @@ export default function Footer() {
             <ul className="flex flex-col gap-3 text-sm text-zinc-500">
               <li><Link href="/" className="hover:text-blue-600">صفحه اصلی</Link></li>
               <li><Link href="/doctors" className="hover:text-blue-600">لیست پزشکان</Link></li>
-              <li><Link href="/faq" className="hover:text-blue-600">سوالات متداول</Link></li>
+              <li><Link href="/FAQ" className="hover:text-blue-600">سوالات متداول</Link></li>
               <li><Link href="/about" className="hover:text-blue-600">درباره ما</Link></li>
               <li><Link href="/contact" className="hover:text-blue-600">تماس با ما</Link></li>
             </ul>

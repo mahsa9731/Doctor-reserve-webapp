@@ -89,7 +89,7 @@ export default function SearchPage() {
     }
   };
 
-  // ریست کردن فیلترها
+  
   const handleResetFilters = () => {
     setSearchTerm("");
     setSelectedSpecialty("");
@@ -102,33 +102,30 @@ export default function SearchPage() {
     setCurrentPage(1);
   };
 
-  // اعمال فیلترهای فعال روی لیست پزشکان دیتابیس
+  
   const filteredDoctors = doctors.filter((doctor) => {
-    // ۱. فیلتر جستجوی متنی (نام و تخصص)
+    
     const matchesSearch = 
       doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // ۲. فیلتر تخصص سایدبار
     const matchesSpecialty = selectedSpecialty === "" || 
       (selectedSpecialty === "heart" && doctor.specialty.includes("قلب")) ||
       (selectedSpecialty === "internal" && doctor.specialty.includes("داخلی")) ||
       (selectedSpecialty === "pediatrics" && doctor.specialty.includes("اطفال"));
 
-    // ۳. فیلتر استان و شهر
+   
     const matchesProvince = selectedProvince === "" || doctor.province === selectedProvince;
     const matchesCity = selectedCity === "" || doctor.city === selectedCity;
 
-    // ۴. فیلتر جنسیت
     const matchesGender = gender === "" || doctor.gender === gender;
 
-    // ۵. فیلتر وضعیت نوبت خالی
     const matchesSlot = !status.hasSlot || doctor.nextSlot !== "به زودی";
 
     return matchesSearch && matchesSpecialty && matchesProvince && matchesCity && matchesGender && matchesSlot;
   });
 
-  // محاسبات مربوط به نمایش پزشکان در صفحه فعلی (صفحه‌بندی)
+ 
   const indexOfLastDoctor = currentPage * doctorsPerPage;
   const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
   const currentDoctors = filteredDoctors.slice(indexOfFirstDoctor, indexOfLastDoctor);
@@ -178,14 +175,14 @@ export default function SearchPage() {
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
-          {/* Sidebar Filters - کامل با انتخاب شهر، استان و استایل‌های درخواستی */}
+         
           <aside className="hidden lg:block bg-white border border-gray-200 rounded-3xl p-6 space-y-6 h-fit sticky top-24 shadow-sm">
             <div className="flex items-center justify-between pb-2 border-b border-gray-50">
                 <h3 className="font-bold text-gray-800">فیلترها</h3>
                 <button onClick={handleResetFilters} className="text-xs text-red-500 hover:underline">حذف همه</button>
             </div>
 
-            {/* جستجو درون فیلتر */}
+           
             <div>
               <label className="block text-xs font-bold text-gray-500 mb-2">جستجوی نام پزشک</label>
               <div className="relative">
@@ -200,7 +197,7 @@ export default function SearchPage() {
               </div>
             </div>
 
-            {/* تخصص */}
+           
             <div>
               <label className="block text-xs font-bold text-gray-500 mb-2">تخصص</label>
               <select
@@ -215,7 +212,7 @@ export default function SearchPage() {
               </select>
             </div>
 
-            {/* بیمه طرف قرارداد */}
+           
             <div>
               <label className="block text-xs font-bold text-gray-500 mb-2">بیمه طرف قرارداد</label>
               <select
@@ -230,7 +227,7 @@ export default function SearchPage() {
               </select>
             </div>
 
-            {/* وضعیت نوبت دهی */}
+           
             <div className="space-y-3">
               <label className="block text-xs font-bold text-gray-500">وضعیت نوبت‌دهی</label>
               <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">

@@ -6,8 +6,45 @@ import ArticleCard from '@/Components/ArticleCard';
 import Link from 'next/link';
 import { Clock, Calendar , CheckCircle2} from 'lucide-react';
 
+interface DoctorHomeData {
+  id: string;
+  name: string;
+  specialty: string;
+  rating: number;
+  reviewsCount: number;
+  location: string;
+  image: string;
+}
 
-export default function HomePage() {
+export default async function HomePage() {
+ 
+  let doctorsList: any[] = [];
+  let newDoctorsList: any[] = [];
+
+  try {
+    
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/doctors`, {
+      cache: 'no-store' 
+    });
+    const data = await res.json();
+
+    if (data && Array.isArray(data)) {
+      
+      doctorsList = data.map((doc: any) => ({
+        id: doc._id,
+        name: doc.name,
+        specialty: doc.specialty,
+        rating: doc.rating ? Number(doc.rating) : 4.8,
+        reviewsCount: doc.reviewsCount || doc.reviews || 105,
+        image: doc.image || doc.avatar || "/images/default-doctor.png"
+      }));
+
+      
+      newDoctorsList = [...doctorsList].reverse();
+    }
+  } catch (error) {
+    console.error("خطا در دریافت اطلاعات پزشکان از API:", error);
+  }
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
       {/* Hero Section */}
@@ -95,11 +132,15 @@ export default function HomePage() {
     </p>
 
     <div className="relative w-full max-w-2xl mx-auto group">
-      <input
-        type="text"
-        placeholder="پزشک یا تخصص مورد نظر خود را جستجو کنید..."
-        className="w-full py-4 px-6 pr-12 rounded-full bg-white/95 text-gray-800 text-right shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-gray-400"
+      <Link href="/search" className="block w-full cursor-pointer">
+     <input
+    type="text"
+    readOnly 
+    tabIndex={-1} 
+    placeholder="پزشک یا تخصص مورد نظر خود را جستجو کنید..."
+    className="w-full py-4 px-6 pr-12 rounded-full bg-white/95 text-gray-800 text-right shadow-lg focus:outline-none transition-all placeholder:text-gray-400 cursor-pointer pointer-events-none" 
       />
+    </Link>
       
      
       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
@@ -111,91 +152,113 @@ export default function HomePage() {
   </div>
 </section>
 
-{/* Popular Doctors Section */}
-<section className="container mx-auto px-4 py-10">
-  <h2 className="text-2xl font-bold mb-8 text-right">جدیدترین پزشک‌ها</h2>
-  
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <DoctorCard 
-      name="دکتر ماهان گروسی" 
-      specialty="فوق تخصص دندانپزشکی" 
-      rating={4.8} 
-      reviewsCount="۲۹۰" 
-      location="تهران"
-      image="/images/doctor-1.jpg" 
-    />
-    <DoctorCard 
-      name="دکتر زهرا سعادتی" 
-      specialty="متخصص گوش و حلق و بینی" 
-      rating={4.6} 
-      reviewsCount="۱۷۰" 
-      location="تهران"
-      image="/images/doctor-2.jpg" 
-    />
-    <DoctorCard 
-      name="دکتر یاشار پناهی" 
-      specialty="متخصص روانشناس بالینی" 
-      rating={4.9} 
-      reviewsCount="۳۵۰" 
-      location="تهران"
-      image="/images/doctor-3.jpg" 
-    />
-    <DoctorCard 
-      name="دکتر لعیا رنگنه" 
-      specialty="متخصص قلب و عروق" 
-      rating={4.5} 
-      reviewsCount="۲۱۰" 
-      location="تهران"
-      image="/images/doctor-4.jpg" 
-    />
+{/* Specialties Section */}
+<section className="container mx-auto px-4 py-12" dir="rtl">
+  <div className="flex justify-between items-center mb-8">
+    <h2 className="text-xl md:text-2xl font-black text-gray-950">لیست تخصص‌ها</h2>
+    <Link href="#" className="text-gray-400 hover:text-gray-600 transition-all text-sm font-bold flex items-center gap-1">
+      <span>مشاهده همه</span>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+      </svg>
+    </Link>
+  </div>
+
+  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+    {[
+      { id: 1, name: 'قلب و عروق', icon: '/images/heartS.png', bgColor: 'bg-red-50' },
+      { id: 2, name: 'ارتوپد', icon: '/images/orthopedics.png', bgColor: 'bg-blue-50' },
+      { id: 3, name: 'مغز و اعصاب', icon: '/images/brain.png', bgColor: 'bg-pink-50' },
+      { id: 4, name: 'دستگاه تنفسی', icon: '/images/pulmonology.png', bgColor: 'bg-purple-50' },
+      { id: 5, name: 'چشم پزشکی', icon: '/images/eye-test.png', bgColor: 'bg-cyan-50' },
+      { id: 6, name: 'اطفال', icon: '/images/pediatrics.png', bgColor: 'bg-orange-50' },
+      { id: 7, name: 'گوش، حلق، بینی', icon: '/images/specialties.png', bgColor: 'bg-emerald-50' },
+    ].map((spec) => (
+      <Link 
+        href={`/search?specialty=${spec.name}`} 
+        key={spec.id}
+        className="bg-white border border-gray-100 hover:border-gray-200 rounded-2xl p-5 flex flex-col items-center justify-center text-center transition-all duration-300 hover:shadow-md hover:shadow-gray-100/70 group active:scale-[0.98] cursor-pointer min-h-[160px]"
+      >
+        <div className={`w-16 h-16 rounded-[18px] flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105 p-3.5 ${spec.bgColor}`}>
+          <img 
+            src={spec.icon} 
+            alt={spec.name} 
+            className="w-full h-full object-contain"
+          />
+        </div>
+
+        <h3 className="text-base font-bold text-gray-900 transition-colors">
+          {spec.name}
+        </h3>
+      </Link>
+    ))}
   </div>
 </section>
 
+{/* Popular Doctors Section */}
+<div className="w-full max-w-6xl mx-auto py-8 px-4 text-center space-y-8" dir="rtl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {doctorsList.slice(0, 4).map((doctor) => (
+          <DoctorCard 
+            key={doctor.id}
+            id={doctor.id}
+            name={doctor.name}
+            specialty={doctor.specialty}
+            rating={doctor.rating}
+            reviewsCount={doctor.reviewsCount}
+            image={doctor.image}
+          />
+        ))}
+      </div>
+
+      <div className="pt-2">
+        <Link href="/doctors">
+          <button className="px-8 py-3 bg-white text-blue-600 border border-blue-100 rounded-xl font-black text-[13px] shadow-sm shadow-blue-50/50 hover:bg-blue-50/50 hover:border-blue-200 active:scale-[0.98] transition-all cursor-pointer">
+            مشاهده بیشتر پزشکان
+          </button>
+        </Link>
+      </div>
+
+    </div>
 
   {/* test*/}
-    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-row items-center overflow-hidden my-8 w-full max-w-4xl mx-auto">
-  <div className="w-1/3 h-40">
-    <img 
-      src="/images/medical-papers.png" 
-      alt="Health Test" 
-      className="w-full h-full object-cover"
-    />
+  <div className="bg-white rounded-3xl shadow-md border border-gray-100 flex flex-col sm:flex-row-reverse items-center overflow-hidden my-12 w-full max-w-5xl mx-auto min-h-[200px] transition-all hover:shadow-lg">
+    <div className="w-full sm:w-1/3 h-48 sm:h-full min-h-[180px]">
+      <img 
+        src="/images/medical-papers.png" 
+        alt="Health Test" 
+        className="w-full h-full object-cover"
+      />
+    </div>
+    
+    <div className="w-full sm:w-2/3 p-6 sm:p-8 text-right flex flex-col justify-center items-start space-y-3" dir="rtl">
+      <h2 className="text-xl md:text-2xl font-bold text-gray-800 leading-tight">
+        همین حالا رایگان تست سلامت بگیرید!
+      </h2>
+      <p className="text-gray-500 text-sm font-semibold opacity-90">
+        در کمتر از دو دقیقه سلامت خود را ارزیابی کنید
+      </p>
+      <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all hover:scale-[1.01] active:scale-[0.98] shadow-sm shadow-blue-600/20 cursor-pointer">
+        شروع تست سلامت
+      </button>
+    </div>
   </div>
-  
-  <div className="w-2/3 p-6 text-right">
-    <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">
-      همین حالا رایگان تست سلامت بگیرید!
-    </h2>
-    <p className="text-gray-500 text-sm mb-4">
-      در کمتر از دو دقیقه سلامت خود را ارزیابی کنید
-    </p>
-    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all">
-      شروع تست سلامت
-    </button>
-  </div>
-</div>
 
 <section className="container mx-auto px-4 py-10">
   <h2 className="text-2xl font-bold mb-8 text-right">جدیدترین پزشک‌ها</h2>
   
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <DoctorCard 
-      name="دکتر ماهان گروسی" 
-      specialty="فوق تخصص دندانپزشکی" 
-      rating={4.8} 
-      reviewsCount="۲۹۰"
-      location="تهران"
-      image="/images/doctor-1.jpg" 
-    />
-    <DoctorCard 
-      name="دکتر زهرا سعادتی" 
-      specialty="متخصص گوش و حلق و بینی" 
-      rating={4.6} 
-      reviewsCount="۱۷۰"
-      location="تهران"
-      image="/images/doctor-2.jpg" 
-    />
-  
+    {newDoctorsList.slice(0, 4).map((doctor) => (
+      <DoctorCard 
+        key={doctor.id}
+        id={doctor.id}
+        name={doctor.name}
+        specialty={doctor.specialty}
+        rating={doctor.rating}
+        reviewsCount={doctor.reviewsCount}
+        image={doctor.image}
+      />
+    ))}
   </div>
 </section>
 
@@ -263,7 +326,7 @@ export default function HomePage() {
     <ArticleCard 
       image="/images/article-2.png"
       title="۵ گام ساده برای پیشگیری از دیابت"
-      excerpt="دیابت نوع ۲ با تغییر سبک زندگی قابل پیشگیری است..."
+      excerpt="دیابت نوع ۲ با تغییر سبک lifestyle قابل پیشگیری است..."
       date="۱۴۰۳/۰۳/۱۰"
     />
     <ArticleCard 
@@ -274,10 +337,6 @@ export default function HomePage() {
     />
   </div>
 </section>
-
-
- 
-      
 
     </div>
   );
