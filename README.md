@@ -1,44 +1,73 @@
-# 🩺 Doctor Reserve (دکتر رزرو)
+# 🩺 Doctor Reserve (دکتر رزرو) - Medical Appointment Booking System
 
-A modern, enterprise-grade Online Doctor Appointment & Booking Platform built on top of **Next.js 14 (App Router)**, powered by **TypeScript**, and styled with **Tailwind CSS**. This production-ready repository serves as the frontend foundation for a scalable, highly responsive medical scheduling ecosystem designed around Figma design guidelines.
+A comprehensive, production-ready Full-Stack Medical Appointment Booking System built using modern web technologies. This platform bridges the gap between healthcare providers and patients by offering seamless browsing, real-time availability checking, and an instantaneous One-Time Password (OTP) authenticated booking pipeline, fully aligned with pixel-perfect Figma designs.
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🚀 Features
 
-Follow these steps to spin up the development environment locally.
+### 👤 Patient Portal & Core Features
+* **Physician Discovery:** Dynamic list and grid views showcasing registered doctors, specializations, ratings, and structural clinic details.
+* **Advanced Search & Filtering:** Instant multi-criteria filtering by specialization, availability, geographical location, and medical expertise.
+* **Comprehensive Profiles:** Detailed medical practitioner profiles, incorporating academic history, patient reviews, consulting fees, and dynamic schedules.
+* **Intuitive Appointment Scheduler:** Interactive time-slot selection displaying immediate real-time availability to avoid double-booking.
+* **Personal Dashboard:** Secured panel where patients can track upcoming appointments, review past medical visits, and manage personal profile metadata.
 
-### Prerequisites
-- **Node.js**: v18.x or higher
-- **Package Manager**: npm, yarn, or pnpm
+### 🛡️ Authentication & Security
+* **Passwordless OTP Authentication:** Secure workflow utilizing mobile numbers and dynamic One-Time Passwords.
+* **JWT Token Architecture:** Seamless token-based authorization via custom Next.js Middleware to safeguard private patient paths and API endpoints.
 
-### Setup
-1. **Clone the Repository**
-   ```bash
-   git clone <repository-url>
-   cd doctor-reserve
+### 💻 Backend & Data Layer
+* **RESTful API Infrastructure:** Built entirely via native Next.js API Routes (App Router) managing standard transactional operations.
+* **Optimized NoSQL Layer:** Data persistence via MongoDB, using highly structured Mongoose schemas ensuring indexing efficiency and structural validation.
 
-     ```bash
-     npm install
-     # or yarn install / pnpm install
+---
 
-# 🛠 Tech Stack & Coding Standards
-Core Framework: Next.js 14 (App Router)
+## 🛠️ Tech Stack
 
-Language: TypeScript (Strictly typed, functional component patterns)
+### Frontend
+* **Framework:** Next.js 14+ (App Router)
+* **Language:** TypeScript
+* **Styling:** Tailwind CSS
 
-Styling: Tailwind CSS (Utility-first, responsive, custom theme extensions)
+### Backend & Database
+* **API Runtime:** Next.js Route Handlers (API Routes)
+* **Database ODM:** Mongoose
+* **Database Server:** MongoDB
 
-Typography: Bi-directional layout engineering using Vazirmatn as the primary typeface.
+### Authentication
+* **Token Standard:** JSON Web Tokens (JWT)
+* **Verification:** OTP (One-Time Password) Logic
 
-# 🤝 Git Workflow for Collaborators
-Sync: Always pull the latest changes from main or develop before starting work.
+---
 
-Branching: Create a dedicated branch for your task: git checkout -b feature/your-feature-name.
+## 📋 Prerequisites
 
-Commits: Write descriptive, semantic commits.
+Before initializing the development workspace, verify that your local environment contains the following utilities:
 
-Deploy: Push your branch and submit a Pull Request (PR) for code review.
+* **Node.js** (v18.x.x or higher recommended)
+* **npm** or **yarn** / **pnpm**
+* **MongoDB Instance** (Local Community Server or MongoDB Atlas cluster connection string)
 
+---
 
+## ⚙️ Installation & Setup Guide
 
+Follow these sequential instructions to deploy a local instance of the application:
+
+### 1. Clone the Repository
+```bash
+git clone 
+cd doctor-reserve
+
+npm install
+# or
+yarn install
+# or
+pnpm install
+
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
