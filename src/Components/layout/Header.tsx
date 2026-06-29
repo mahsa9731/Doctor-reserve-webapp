@@ -7,23 +7,22 @@ import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // کنترل منوی کشویی کاربر
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); 
   const [user, setUser] = useState<{ firstName: string; lastName: string; avatar: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // بررسی وضعیت لاگین کاربر هنگام لود شدن کامپوننت
   useEffect(() => {
     async function checkAuth() {
       try {
         const res = await fetch('/api/user/profile', { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
-          // اگر نام و فامیل هنوز پر نشده بود، به صورت پیش‌فرض مقادیر زیر را نشان دهد
+         
           setUser({
             firstName: data.firstName || 'کاربر',
             lastName: data.lastName || 'عزیز',
-            avatar: data.avatar || '/avatars/uploadpic.png', // تصویر پیش‌فرض از مسیر public/avatars
+            avatar: data.avatar || '/avatars/uploadpic.png', 
           });
         } else {
           setUser(null);
@@ -38,10 +37,10 @@ export default function Header() {
     checkAuth();
   }, []);
 
-  // عملیات خروج از حساب کاربری
+  
   const handleLogout = async () => {
     try {
-      // پاک کردن کوکی توکن
+      
       const res = await fetch('/api/auth/logout', { method: 'POST' });
       if (res.ok) {
       
@@ -60,7 +59,7 @@ export default function Header() {
     <header className="w-full bg-white border-b border-zinc-100 sticky top-0 z-50" dir="rtl">
       <div className="max-w-[1200px] mx-auto h-20 flex items-center justify-between px-4 relative z-20 bg-white">
         
-        {/* لوگو */}
+       
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image 
             src="/brand/logo rezerve.png" 
@@ -71,7 +70,7 @@ export default function Header() {
           />
         </Link>
 
-        {/* منوی ناوبری دسکتاپ */}
+       
         <nav className="hidden md:flex items-center gap-8 text-[15px] font-medium text-zinc-600">
           <Link href="/doctors" className="hover:text-blue-600 transition-colors">لیست پزشکان</Link>
           <Link href="/FAQ" className="hover:text-blue-600 transition-colors">سوالات متداول</Link>
@@ -79,14 +78,14 @@ export default function Header() {
           <Link href="/contact" className="hover:text-blue-600 transition-colors">تماس با ما</Link>
         </nav>
 
-        {/* بخش دکمه ورود یا آواتار کاربر */}
+        
         <div className="flex items-center gap-4">
           
           {loading ? (
-            // لودینگ کامپوننت تا وضعیت دیتابیس مشخص شود
+           
             <div className="w-24 h-9 bg-zinc-100 rounded-xl animate-pulse hidden sm:block"></div>
           ) : user ? (
-            /* ================= بخش کاربر وارد شده (آواتار و نام) ================= */
+           
             <div className="relative">
               <button 
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -148,7 +147,7 @@ export default function Header() {
             </Link>
           )}
 
-          {/* دکمه منوی موبایل */}
+          
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)} 
             className="md:hidden text-zinc-600 p-2.5 w-10 h-10 rounded-xl hover:bg-zinc-100 active:scale-95 transition-all relative z-30 flex items-center justify-center"
@@ -172,7 +171,6 @@ export default function Header() {
 
       </div>
 
-      {/* منوی کشویی موبایل */}
       <div 
         className={`md:hidden overflow-hidden bg-white border-b border-zinc-100 shadow-xl transition-all duration-300 ease-in-out relative z-10 ${
           isMenuOpen ? 'max-h-[350px] opacity-100 py-6' : 'max-h-0 opacity-0 py-0 border-transparent shadow-none'
@@ -188,7 +186,7 @@ export default function Header() {
               لیست پزشکان
             </Link>
             <Link 
-              href="/faq" 
+              href="/FAQ" 
               onClick={() => setIsMenuOpen(false)} 
               className="py-4 border-b border-zinc-50 hover:text-blue-600 active:bg-zinc-50 transition-colors"
             >
