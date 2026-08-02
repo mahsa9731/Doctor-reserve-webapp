@@ -6,6 +6,8 @@ import ArticleCard from '@/Components/ArticleCard';
 import Link from 'next/link';
 import { Clock, Calendar , CheckCircle2} from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 interface DoctorHomeData {
   id: string;
   name: string;
@@ -23,8 +25,10 @@ export default async function HomePage() {
 
   try {
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/doctors`, {
-      cache: 'no-store' 
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+                (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const res = await fetch(`${baseUrl}/api/doctors`, {
+    cache: 'no-store' 
     });
     const data = await res.json();
 
