@@ -73,7 +73,7 @@ export default function Header() {
        
         <nav className="hidden md:flex items-center gap-8 text-[15px] font-medium text-zinc-600">
           <Link href="/doctors" className="hover:text-blue-600 transition-colors">لیست پزشکان</Link>
-          <Link href="/FAQ" className="hover:text-blue-600 transition-colors">سوالات متداول</Link>
+          <Link href="/faq" className="hover:text-blue-600 transition-colors">سوالات متداول</Link>
           <Link href="/about" className="hover:text-blue-600 transition-colors">درباره ما</Link>
           <Link href="/contact" className="hover:text-blue-600 transition-colors">تماس با ما</Link>
         </nav>
@@ -186,7 +186,7 @@ export default function Header() {
               لیست پزشکان
             </Link>
             <Link 
-              href="/FAQ" 
+              href="/faq" 
               onClick={() => setIsMenuOpen(false)} 
               className="py-4 border-b border-zinc-50 hover:text-blue-600 active:bg-zinc-50 transition-colors"
             >
