@@ -224,12 +224,12 @@ export default async function HomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {doctorsList.slice(0, 4).map((doctor) => (
           <DoctorCard 
-            key={doctor.id}
-            id={doctor.id}
+            key={doctor._id || doctor.id}
+            id={doctor._id || doctor.id}
             name={doctor.name}
             specialty={doctor.specialty}
             rating={doctor.rating}
-            reviewsCount={doctor.reviewsCount}
+            reviewsCount={doctor.reviewsCount || doctor.reviews}
             image={doctor.image}
           />
         ))}
@@ -274,8 +274,8 @@ export default async function HomePage() {
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {newDoctorsList.slice(0, 4).map((doctor) => (
       <DoctorCard 
-        key={doctor.id}
-        id={doctor.id}
+        key={doctor._id || doctor.id}
+        id={doctor._id || doctor.id}
         name={doctor.name}
         specialty={doctor.specialty}
         rating={doctor.rating}
