@@ -52,69 +52,89 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 flex flex-col md:flex-row items-center">
-        <div className="md:w-1/2 space-y-6">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-            سلامت شما،رسالت ما 
-          </h1>
-          <p className="text-gray-600 text-lg">
-            بهترین پزشکان را در دسترس شما.
-            <br />
-            نوبت دهی آنلاین مطمئن فقط با چند کلیک.
-          </p>
+      <div className="relative overflow-hidden bg-gradient-to-b from-blue-50/60 via-slate-50/30 to-white pt-6 pb-12">
+  
+      <div className="absolute top-10 right-1/4 w-96 h-96 bg-blue-300/30 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-10 w-80 h-80 bg-indigo-200/25 rounded-full blur-3xl pointer-events-none -z-10" />
+    <section className="container mx-auto px-4 py-12 md:py-20 flex flex-col md:flex-row items-center gap-10 md:gap-14">
+    <div className="w-full md:w-1/2 space-y-6 text-center md:text-right">
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight sm:leading-snug tracking-tight">
+        سلامت شما،{' '}
+        <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          رسالت ما
+        </span>
+      </h1>
+      
+      <p className="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl mx-auto md:mx-0">
+        بهترین پزشکان در دسترس شما.
+        <br />
+        نوبت دهی آنلاین مطمئن فقط با چند کلیک.
+      </p>
 
-          <Link href="/search">
-         <button className="bg-blue-100/70 text-blue-600 border border-blue-100/50 px-10 py-3.5 rounded-xl font-black text-[14px] transition-all hover:bg-blue-100/60 hover:text-blue-700 active:scale-[0.98] shadow-sm shadow-blue-50/40">
+      <div className="flex flex-row items-center justify-center md:justify-start gap-4 pt-2">
+        <Link href="/search">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-[14px] sm:text-base px-8 py-3.5 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-lg shadow-blue-500/25 hover:shadow-blue-500/35">
             رزرو نوبت
-         </button> 
-          </Link>
-           <Link href="/contact">
-          <button className="bg-blue-100/70 text-blue-600 border border-blue-100/50 px-10 py-3.5 rounded-xl font-black text-[14px] transition-all hover:bg-blue-100/60 hover:text-blue-700 active:scale-[0.98] shadow-sm shadow-blue-50/40">
+          </button> 
+        </Link>
+        
+        <Link href="/contact">
+          <button className="bg-white/80 backdrop-blur-md text-blue-600 border border-blue-100 hover:bg-blue-50 hover:border-blue-200 font-bold text-[14px] sm:text-base px-8 py-3.5 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-sm">
             پشتیبانی
           </button>
         </Link>
+      </div>
+    </div>
+
+    <div className="w-full md:w-1/2 mt-6 md:mt-0 relative flex justify-center items-center">
+      <div className="absolute w-[80%] h-[80%] bg-gradient-to-tr from-blue-400/30 to-indigo-300/30 rounded-full blur-3xl -z-10" />
+      <div className="relative w-full max-w-md">
+        <img 
+          src="/images/hospital-profession-people.png" 
+          alt="Hero" 
+          className="w-full h-auto object-cover mix-blend-multiply opacity-95 [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_100%)]" 
+        />
+      </div>
+      
+    </div>
+  </section>
+  
+  <section className="container mx-auto px-4 sm:px-6 py-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <div className="bg-white/60 backdrop-blur-md border border-slate-200/60 rounded-2xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group">
+        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shrink-0">
+          <Clock className="w-6 h-6" strokeWidth={2.2} />
         </div>
-        <div className="md:w-1/2 mt-8 md:mt-0">
-          <img src="/images/hospital-profession-people.png" alt="Hero" className="w-full rounded-2xl" />
+        <div>
+          <h3 className="font-bold text-slate-800 text-base mb-1">دسترسی ۲۴ ساعته به پزشکان</h3>
+          <p className="text-slate-500 text-sm leading-relaxed">در هر زمانی می‌توانید نوبت خود را رزرو کنید.</p>
         </div>
-      </section>
-      <section className="container mx-auto px-6 py-12">
+      </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-    
-    <div className="border border-slate-200 rounded-xl p-6 flex items-start gap-4">
-      <div className="text-2xl">
-        <Clock className="w-5 h-5 text-blue-600" strokeWidth={2.5} />
+      <div className="bg-white/60 backdrop-blur-md border border-slate-200/60 rounded-2xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 group">
+        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 shrink-0">
+          <CheckCircle2 className="w-6 h-6" strokeWidth={2.2} />
+        </div>
+        <div>
+          <h3 className="font-bold text-slate-800 text-base mb-1">اطمینان از انتخاب مجرب‌ترین پزشکان</h3>
+          <p className="text-slate-500 text-sm leading-relaxed">بهترین پزشکان را با توجه به نظرات کاربران انتخاب کنید.</p>
+        </div>
       </div>
-      <div>
-        <h3 className="font-bold text-slate-800 mb-1">دسترسی ۲۴ ساعته به پزشکان</h3>
-        <p className="text-slate-500 text-sm">در هر زمانی می‌توانید نوبت خود را رزرو کنید</p>
+
+      <div className="bg-white/60 backdrop-blur-md border border-slate-200/60 rounded-2xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all duration-300 group">
+        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300 shrink-0">
+          <Calendar className="w-6 h-6" strokeWidth={2.2} />
+        </div>
+        <div>
+          <h3 className="font-bold text-slate-800 text-base mb-1">مدیریت و تغییر نوبت‌ها به راحتی</h3>
+          <p className="text-slate-500 text-sm leading-relaxed">به سادگی نوبت خود را تغییر دهید و یا لغو کنید.</p>
+        </div>
       </div>
+
     </div>
-
-    <div className="border border-slate-200 rounded-xl p-6 flex items-start gap-4">
-      <div className="text-2xl">
-        <CheckCircle2 className="w-6 h-6" strokeWidth={2.5} />
-      </div>
-      <div>
-        <h3 className="font-bold text-slate-800 mb-1">اطمینان از انتخاب مجرب‌ترین پزشکان</h3>
-        <p className="text-slate-500 text-sm">بهترین پزشکان را با توجه به نظرات کاربران انتخاب کنید</p>
-      </div>
-    </div>
-
-    <div className="border border-slate-200 rounded-xl p-6 flex items-start gap-4">
-      <div className="text-2xl">
-        <Calendar className="w-5 h-5 text-emerald-600" strokeWidth={2.5} />
-      </div>
-      <div>
-        <h3 className="font-bold text-slate-800 mb-1">مدیریت و تغییر نوبت‌ها به راحتی</h3>
-        <p className="text-slate-500 text-sm">توانایی لغو، تغییر و مدیریت نوبت‌ها به راحتی</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-
+  </section>
+</div>
       {/* Search Section */}
       <section className="relative w-full h-[300px] md:h-[400px] flex items-center justify-center overflow-hidden rounded-2xl mt-6">
  
@@ -218,7 +238,7 @@ export default async function HomePage() {
       <div className="pt-2">
         <Link href="/doctors">
           <button className="px-8 py-3 bg-white text-blue-600 border border-blue-100 rounded-xl font-black text-[13px] shadow-sm shadow-blue-50/50 hover:bg-blue-50/50 hover:border-blue-200 active:scale-[0.98] transition-all cursor-pointer">
-            مشاهده بیشتر پزشکان
+            مشاهده پزشکان
           </button>
         </Link>
       </div>

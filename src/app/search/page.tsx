@@ -53,7 +53,7 @@ export default function SearchPage() {
   useEffect(() => {
     async function fetchDoctors() {
       try {
-        const res = await fetch("/api/doctors");
+        const res = await fetch("/api/doctors" , { cache: "no-store" });
         const data = await res.json();
         if (Array.isArray(data)) {
           const mappedDoctors = data.map((doc: any) => ({
