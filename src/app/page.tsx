@@ -35,7 +35,7 @@ export default async function HomePage() {
     if (data && Array.isArray(data)) {
       
       doctorsList = data.map((doc: any) => ({
-        id: doc._id,
+        id: doc._id ? doc._id.toString() : doc.id, //ghh
         name: doc.name,
         specialty: doc.specialty,
         rating: doc.rating ? Number(doc.rating) : 4.8,
@@ -224,12 +224,12 @@ export default async function HomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {doctorsList.slice(0, 4).map((doctor) => (
           <DoctorCard 
-            key={doctor._id || doctor.id}
-            id={doctor._id || doctor.id}
+            key={doctor.id}
+            id={doctor.id}
             name={doctor.name}
             specialty={doctor.specialty}
             rating={doctor.rating}
-            reviewsCount={doctor.reviewsCount || doctor.reviews}
+            reviewsCount={doctor.reviewsCount}
             image={doctor.image}
           />
         ))}
