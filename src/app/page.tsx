@@ -274,8 +274,8 @@ export default async function HomePage() {
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {newDoctorsList.slice(0, 4).map((doctor) => (
       <DoctorCard 
-        key={doctor._id || doctor.id}
-        id={doctor._id || doctor.id}
+        key={doctor.id}
+        id={doctor.id}
         name={doctor.name}
         specialty={doctor.specialty}
         rating={doctor.rating}
