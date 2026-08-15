@@ -158,9 +158,9 @@ export default function ProfilePage() {
         </h1>
 
       
-        <div className="w-full border border-blue-100 rounded-2xl p-8 flex flex-row gap-8 items-start relative bg-white shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
+        <div className="w-full border border-blue-100 rounded-2xl p-6 md:p-8 flex flex-col-reverse md:flex-row gap-8 items-start relative bg-white shadow-[0_8px_30px_rgba(0,0,0,0.02)">
          
-          <div className="flex-1 grid grid-cols-2 gap-y-8 gap-x-12 text-right">
+          <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-y-8 gap-x-12 text-right">
            
             <div>
               <label className="block text-[12px] font-bold text-gray-400 mb-1.5">
@@ -365,7 +365,7 @@ export default function ProfilePage() {
           </div>
 
         
-          <div className="w-[180px] flex flex-col items-center gap-4 border-r border-gray-100 pr-8 self-stretch justify-start pt-4">
+          <div className="w-full md:w-[180px] flex flex-col items-center gap-4 border-b md:border-b-0 md:border-r border-gray-100 pb-6 md:pb-0 md:pr-8 self-stretch justify-start pt-4">
             <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-blue-100 p-1 bg-gray-50">
               <img
                 src="/avatars/uploadpic.png" 
