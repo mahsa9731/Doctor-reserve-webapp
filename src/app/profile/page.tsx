@@ -325,14 +325,14 @@ export default function ProfilePage() {
             </div>
 
           
-            <div className="col-span-2 mt-4 flex flex-col gap-3">
+            <div className="col-span-1 md:col-span-2 mt-4 flex flex-col gap-3">
               {error && (
                 <p className="text-[12px] font-bold text-red-500 bg-red-50 border border-red-100 px-4 py-2.5 rounded-xl">
                   {error}
                 </p>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 w-full">
                 {isEditing ? (
                   <>
                     <button
