@@ -235,13 +235,30 @@ export default async function HomePage() {
         ))}
       </div>
 
-      <div className="pt-2">
-        <Link href="/doctors">
-          <button className="px-8 py-3 bg-white text-blue-600 border border-blue-100 rounded-xl font-black text-[13px] shadow-sm shadow-blue-50/50 hover:bg-blue-50/50 hover:border-blue-200 active:scale-[0.98] transition-all cursor-pointer">
-            مشاهده پزشکان
-          </button>
-        </Link>
-      </div>
+      <div className="relative w-full max-w-xl mx-auto my-6 rounded-3xl overflow-hidden shadow-lg border border-slate-100">
+  <div 
+    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
+    style={{ backgroundImage: "url('/images/ddoc.jpg')" }}
+  />
+  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-slate-900/40 to-transparent backdrop-blur-[2px]" />
+  <div className="relative z-10 flex flex-col items-center justify-center py-12 px-6 text-center space-y-4">
+    <span className="text-white/90 text-xs font-bold bg-white/20 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20">
+      خدمات نوبت‌دهی آنلاین
+    </span>
+
+    <h3 className="text-white text-lg sm:text-xl font-black leading-snug">
+      دسترسی سریع به برترین متخصصان
+    </h3>
+
+    <div className="pt-2">
+      <Link href="/doctors">
+        <button className="px-8 py-3.5 bg-white/90 hover:bg-white text-blue-600 rounded-2xl font-black text-[13px] shadow-xl shadow-black/10 hover:shadow-2xl active:scale-[0.98] transition-all cursor-pointer backdrop-blur-md border border-white">
+          مشاهده پزشکان
+        </button>
+      </Link>
+    </div>
+  </div>
+</div>
 
     </div>
 
@@ -262,9 +279,11 @@ export default async function HomePage() {
       <p className="text-gray-500 text-sm font-semibold opacity-90">
         در کمتر از دو دقیقه سلامت خود را ارزیابی کنید
       </p>
+     <Link href="/health-test">
       <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold text-[13px] transition-all hover:scale-[1.01] active:scale-[0.98] shadow-sm shadow-blue-600/20 cursor-pointer">
         شروع تست سلامت
       </button>
+     </Link>
     </div>
   </div>
 
